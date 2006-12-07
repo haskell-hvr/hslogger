@@ -9,13 +9,12 @@ see the INSTALL file instead of this one.
 PREREQUISITES
 -------------
 
-You need GHC 6.6 or above.
+You need GHC 6.6 or above as well as the mtl library.
+
+You can find mtl at http://hackage.haskell.org/packages/unstable/mtl/
 
 INSTALLATION
 ------------
-
-Before doing anything, open up a command prompt and cd into the
-top-level missingh directory.
 
 Now, run the script to build the program:
 

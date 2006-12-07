@@ -22,8 +22,8 @@ If you need Cabal, get it from http://www.haskell.org/cabal.
 
 Debian users can install the packages cpphs and ghc6
 
-3. GHC extralibs collection, or the individual
-   libraries mentioned in MissingH.cabal
+3. GHC extralibs collection, or mtl from
+   http://hackage.haskell.org/packages/unstable/mtl/
 
 INSTALLATION
 ------------
