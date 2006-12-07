@@ -11,8 +11,8 @@ Exposed-Modules:
     System.Log.Logger 
 -- Extensions: ExistentialQuantification, OverlappingInstances, 
 --   UndecidableInstances, CPP
-Extensions: CPP
-Build-Depends: network, base, mtl
+Extensions: CPP, ExistentialQuantification
+Build-Depends: haskell98, network, base, mtl
 -- Cabal will add Unix here for Posix platforms
 GHC-Options: -O2
 

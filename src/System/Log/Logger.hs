@@ -171,7 +171,6 @@ logger hierarchy. -}
                                saveGlobalLogger,
                                updateGlobalLogger
                                ) where
-import Data.String
 import System.Log
 import System.Log.Handler(LogHandler)
 import qualified System.Log.Handler(handle)
@@ -179,7 +178,7 @@ import System.Log.Handler.Simple
 import IO
 import System.IO.Unsafe
 import Control.Concurrent.MVar
-import Data.List(map)
+import Data.List(map, isPrefixOf)
 import qualified Data.Map as Map
 import qualified Control.Exception
 import Control.Monad.Error
@@ -458,3 +457,30 @@ traplogging logger priority desc action =
         in
         Control.Exception.catch action handler
     
+{- This function pulled in from MissingH to avoid a dep on it -}
+split :: Eq a => [a] -> [a] -> [[a]]
+split _ [] = []
+split delim str =
+    let (firstline, remainder) = breakList (isPrefixOf delim) str
+        in
+        firstline : case remainder of
+                                   [] -> []
+                                   x -> if x == delim
+                                        then [] : []
+                                        else split delim
+                                                 (drop (length delim) x)
+
+-- This function also pulled from MissingH
+breakList :: ([a] -> Bool) -> [a] -> ([a], [a])
+breakList func = spanList (not . func)
+
+-- This function also pulled from MissingH
+spanList :: ([a] -> Bool) -> [a] -> ([a], [a])
+
+spanList _ [] = ([],[])
+spanList func list@(x:xs) =
+    if func list
+       then (x:ys,zs)
+       else ([],list)
+    where (ys,zs) = spanList func xs
+
