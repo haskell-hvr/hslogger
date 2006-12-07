@@ -1,0 +1,23 @@
+Name: hslogger
+Version: 1.0.0
+License: LGPL
+Maintainer: John Goerzen <jgoerzen@complete.org>
+Stability: Beta
+Copyright: Copyright (c) 2004-2006 John Goerzen
+Hs-Source-Dirs: src
+Exposed-Modules: 
+  System.Log, System.Log.Handler,
+    System.Log.Handler.Simple, System.Log.Handler.Syslog,
+    System.Log.Logger, 
+Extensions: ExistentialQuantification, OverlappingInstances, 
+   UndecidableInstances, CPP
+Build-Depends: network, parsec, base,
+               haskell98, mtl, HUnit, regex-compat, QuickCheck, FilePath
+GHC-Options: -O2
+
+Executable: runtests
+Buildable: False
+Main-Is: runtests.hs
+HS-Source-Dirs: testsrc, .
+Extensions: ExistentialQuantification, OverlappingInstances,
+    UndecidableInstances, CPP
