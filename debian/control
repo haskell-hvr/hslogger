@@ -1,59 +1,49 @@
-Source: missingh
+Source: hslogger
 Priority: optional
 Maintainer: John Goerzen <jgoerzen@complete.org>
-Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.6), ghc6 (<< 6.6-999), haskell-devscripts (>= 0.5.6), cpphs, libghc6-network-dev, libghc6-unix-dev, libghc6-mtl-dev, libghc6-hunit-dev, libghc6-quickcheck-dev, libghc6-filepath-dev
+Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.6), ghc6 (<< 6.6-999), haskell-devscripts (>= 0.5.6), cpphs, libghc6-network-dev, libghc6-unix-dev, libghc6-mtl-dev, libghc6-hunit-dev
 Build-Depends-Indep: debhelper (>= 4.0.0), haddock, hugs (>= 98.200503.08), haskell-devscripts (>= 0.5.6), ghc6 (>= 6.6), cpphs, libhugs-filepath, libhugs-hunit 
 Standards-Version: 3.6.2
 Section: devel
 
-Package: libghc6-missingh-dev
+Package: libghc6-hslogger-dev
 Section: devel
 Architecture: any
-Depends: ${haskell:Depends}, libghc6-network-dev, libghc6-unix-dev, libghc6-mtl-dev, libghc6-hunit-dev, libghc6-quickcheck-dev, libghc6-filepath-dev
-Suggests: missingh-doc
-Description: Library of utility functions for Haskell, GHC6 package 
- MissingH is a library of all sorts of utility functions for
- Haskell programmers.  It is written in pure Haskell and thus should
- be extremely portable and easy to use.  It also has no prerequisites
- save those that are commonly included with Haskell compilers.
+Depends: ${haskell:Depends}, libghc6-network-dev, libghc6-unix-dev, libghc6-mtl-dev
+Suggests: hslogger-doc
+Description: The Haskell Logging Framework, GHC package
+ hslogger is a logging framework for Haskell, roughly similar to
+ Python's logging module.
  .
- MissingH is based on my MissingLib library for OCaml and contains some
- of the same features.  However, some features are left behind because
- they are already in Haskell or not needed here -- and others are added
- due to things Haskell is missing, or things that Haskell makes
- possible.
+ hpodder lets each log message have a priority and source be associated
+ with it.  The programmer can then define global handlers that route
+ or filter messages based on the priority and source.  hslogger also
+ has a syslog handler built in.
 
-Package: libhugs-missingh
+Package: libhugs-hslogger
 Section: devel
 Architecture: all
-Depends: ${haskell:Depends}, libhugs-filepath, libhugs-hunit
-Suggests: missingh-doc
-Description: Library of utility functions for Haskell, Hugs package 
- MissingH is a library of all sorts of utility functions for
- Haskell programmers.  It is written in pure Haskell and thus should
- be extremely portable and easy to use.  It also has no prerequisites
- save those that are commonly included with Haskell compilers.
+Depends: ${haskell:Depends}
+Suggests: hslogger-doc
+Description: The Haskell Logging Framework, Hugs package
+ hslogger is a logging framework for Haskell, roughly similar to
+ Python's logging module.
  .
- MissingH is based on my MissingLib library for OCaml and contains some
- of the same features.  However, some features are left behind because
- they are already in Haskell or not needed here -- and others are added
- due to things Haskell is missing, or things that Haskell makes
- possible.
+ hpodder lets each log message have a priority and source be associated
+ with it.  The programmer can then define global handlers that route
+ or filter messages based on the priority and source.  hslogger also
+ has a syslog handler built in.
 
-Package: missingh-doc
+Package: hslogger-doc
 Section: doc
 Architecture: all
-Description: Documentation for Haskell utility library
- MissingH is a library of all sorts of utility functions for
- Haskell programmers.  It is written in pure Haskell and thus should
- be extremely portable and easy to use.  It also has no prerequisites
- save those that are commonly included with Haskell compilers.
+Description: The Haskell Logging Framework, API Documentation
+ hslogger is a logging framework for Haskell, roughly similar to
+ Python's logging module.
  .
- MissingH is based on my MissingLib library for OCaml and contains some
- of the same features.  However, some features are left behind because
- they are already in Haskell or not needed here -- and others are added
- due to things Haskell is missing, or things that Haskell makes
- possible.
- .
- This package provides the API documentation for MissingH.
+ hpodder lets each log message have a priority and source be associated
+ with it.  The programmer can then define global handlers that route
+ or filter messages based on the priority and source.  hslogger also
+ has a syslog handler built in.
+
 

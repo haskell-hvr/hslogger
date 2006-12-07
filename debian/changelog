@@ -1,6 +1,6 @@
 hslogger (1.0.0) unstable; urgency=low
 
-  * Initial release.  Closes: #
+  * Initial release.  Closes: #401929.
   * This package used to be a part of MissingH and was split off as part
     of the MissingH transition plan.
 
