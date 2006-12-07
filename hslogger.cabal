@@ -2,17 +2,18 @@ Name: hslogger
 Version: 1.0.0
 License: LGPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
-Stability: Beta
+Stability: Stable
 Copyright: Copyright (c) 2004-2006 John Goerzen
 Hs-Source-Dirs: src
 Exposed-Modules: 
   System.Log, System.Log.Handler,
     System.Log.Handler.Simple, System.Log.Handler.Syslog,
-    System.Log.Logger, 
-Extensions: ExistentialQuantification, OverlappingInstances, 
-   UndecidableInstances, CPP
-Build-Depends: network, parsec, base,
-               haskell98, mtl, HUnit, regex-compat, QuickCheck, FilePath
+    System.Log.Logger 
+-- Extensions: ExistentialQuantification, OverlappingInstances, 
+--   UndecidableInstances, CPP
+Extensions: CPP
+Build-Depends: network, base, mtl
+-- Cabal will add Unix here for Posix platforms
 GHC-Options: -O2
 
 Executable: runtests
