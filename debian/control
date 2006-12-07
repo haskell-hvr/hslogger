@@ -15,7 +15,7 @@ Description: The Haskell Logging Framework, GHC package
  hslogger is a logging framework for Haskell, roughly similar to
  Python's logging module.
  .
- hpodder lets each log message have a priority and source be associated
+ hslogger lets each log message have a priority and source be associated
  with it.  The programmer can then define global handlers that route
  or filter messages based on the priority and source.  hslogger also
  has a syslog handler built in.
@@ -29,7 +29,7 @@ Description: The Haskell Logging Framework, Hugs package
  hslogger is a logging framework for Haskell, roughly similar to
  Python's logging module.
  .
- hpodder lets each log message have a priority and source be associated
+ hslogger lets each log message have a priority and source be associated
  with it.  The programmer can then define global handlers that route
  or filter messages based on the priority and source.  hslogger also
  has a syslog handler built in.
@@ -41,7 +41,7 @@ Description: The Haskell Logging Framework, API Documentation
  hslogger is a logging framework for Haskell, roughly similar to
  Python's logging module.
  .
- hpodder lets each log message have a priority and source be associated
+ hslogger lets each log message have a priority and source be associated
  with it.  The programmer can then define global handlers that route
  or filter messages based on the priority and source.  hslogger also
  has a syslog handler built in.
