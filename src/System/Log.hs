@@ -31,8 +31,6 @@ Written by John Goerzen, jgoerzen\@complete.org
 
 This module defines basic types used for logging.
 
-/This API is new and in a state of flux./
-
 Extensive documentation is available in
 "System.Log.Logger".
 
