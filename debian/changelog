@@ -1,3 +1,11 @@
+hslogger (1.0.0) unstable; urgency=low
+
+  * Initial release.  Closes: #
+  * This package used to be a part of MissingH and was split off as part
+    of the MissingH transition plan.
+
+ -- John Goerzen <jgoerzen@complete.org>  Wed,  6 Dec 2006 05:03:53 -0600
+
 missingh (0.16.3) unstable; urgency=low
 
   * New version
