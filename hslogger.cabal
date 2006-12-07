@@ -4,6 +4,8 @@ License: LGPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Stable
 Copyright: Copyright (c) 2004-2006 John Goerzen
+Homepage: http://software.complete.org/hslogger
+Synopsis: Versatile logging framework
 Hs-Source-Dirs: src
 Exposed-Modules: 
   System.Log, System.Log.Handler,
