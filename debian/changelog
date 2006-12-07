@@ -1,3 +1,9 @@
+hslogger (1.0.1) unstable; urgency=low
+
+  * Fixed typo in debian/control.
+
+ -- John Goerzen <jgoerzen@complete.org>  Wed,  6 Dec 2006 15:57:03 -0600
+
 hslogger (1.0.0) unstable; urgency=low
 
   * Initial release.  Closes: #401929.
