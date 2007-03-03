@@ -115,8 +115,8 @@ buildRegistration s = concat fields
      packet to the machine. This function will throw an exception if
      the host name cannot be found. -}
 
-addTarget :: GrowlHandler -> HostName -> IO GrowlHandler
-addTarget gh hn = do { he <- getHostByName hn
+addTarget :: HostName -> GrowlHandler -> IO GrowlHandler
+addTarget hn gh = do { he <- getHostByName hn
                      ; let ha = hostAddress he
                            sa = SockAddrInet (PortNum 9887) ha
                        in do { sendTo (skt gh) (buildRegistration gh) sa
