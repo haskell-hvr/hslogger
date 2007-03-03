@@ -46,16 +46,21 @@ data GrowlHandler = GrowlHandler { priority :: Priority,
                                    targets :: [HostAddress] }
 
 instance LogHandler GrowlHandler where
-    setLevel gh p = gh { priority = p }
-    getLevel = priority
-    emit gh lr _ = let pkt = buildNotification gh nmGeneralMsg lr
-		   in mapM_ (sendNote gh pkt) (targets gh)
-    close gh = let pkt = buildNotification gh nmClosingMsg
-			 (WARNING, "connection closing")
-	       in mapM_ (sendNote gh pkt) (targets gh) >> sClose (skt gh)
 
-sendNote :: GrowlHandler -> String -> HostAddress -> IO Int
-sendNote gh pkt ha = sendTo (skt gh) pkt (SockAddrInet (PortNum 9887) ha)
+    setLevel gh p = gh { priority = p }
+
+    getLevel = priority
+
+    emit gh lr _ = let pkt = buildNotification gh nmGeneralMsg lr
+		   in mapM_ (sendNote (skt gh) pkt) (targets gh)
+
+    close gh = let pkt = buildNotification gh nmClosingMsg
+			 (WARNING, "Connection closing.")
+                   s   = skt gh
+	       in mapM_ (sendNote s pkt) (targets gh) >> sClose s
+
+sendNote :: Socket -> String -> HostAddress -> IO Int
+sendNote s pkt ha = sendTo s pkt (SockAddrInet (PortNum 9887) ha)
 
 -- Right now there are two "notification names": "message" and
 -- "disconnecting". All log messages are sent using the "message"
@@ -80,16 +85,14 @@ growlHandler nm pri =
                                skt = s, targets = [] }
        }
 
--- Converts a Word8 into a single-character string.
-
-emit8 :: Word8 -> String
-emit8 v = [chr (fromEnum v)]
-
 -- Converts a Word16 into a string of two characters. The value is
 -- emitted in network byte order.
 
 emit16 :: Word16 -> String
 emit16 v = let (h, l) = (fromEnum v) `divMod` 256 in [chr h, chr l]
+
+emitLen16 :: [a] -> String
+emitLen16 = emit16 . fromIntegral . length
 
 -- Takes a Service record and generates a network packet
 -- representing the service.
@@ -97,14 +100,15 @@ emit16 v = let (h, l) = (fromEnum v) `divMod` 256 in [chr h, chr l]
 buildRegistration :: GrowlHandler -> String
 buildRegistration s = concat fields
     where fields = [ ['\x1', '\x4'],
-                     ((emit16 . fromIntegral . length) (appName s)),
-                     (emit8 . fromIntegral . length) appNotes,
-                     (emit8 . fromIntegral . length) appNotes,
+                     emitLen16 (appName s),
+                     emitLen8 appNotes,
+                     emitLen8 appNotes,
                      appName s,
                      foldl packIt [] appNotes,
                      ['\x0' .. (chr (length appNotes - 1))] ]
-          packIt a b = a ++ ((emit16 . fromIntegral . length) b) ++ b
+          packIt a b = a ++ (emitLen16 b) ++ b
 	  appNotes = [ nmGeneralMsg, nmClosingMsg ]
+          emitLen8 v = [chr $ length v]
 
 {- | Adds a remote machine's address to the list of targets that will
      receive log messages. Calling this function sends a registration
@@ -123,10 +127,10 @@ toFlags DEBUG = 12
 toFlags INFO = 10
 toFlags NOTICE = 0
 toFlags WARNING = 2
-toFlags ERROR = 3
-toFlags CRITICAL = 3
+toFlags ERROR = 3       -- Same as WARNING, but "sticky" bit set
+toFlags CRITICAL = 3    -- Same as WARNING, but "sticky" bit set
 toFlags ALERT = 4
-toFlags EMERGENCY = 5
+toFlags EMERGENCY = 5   -- Same as ALERT, but "sticky" bit set
 
 -- Creates a network packet containing a notification record.
 
@@ -137,10 +141,10 @@ buildNotification :: GrowlHandler
 buildNotification gh nm (p, msg) = concat fields
     where fields = [ ['\x1', '\x5'],
                      emit16 (toFlags p),
-                     (emit16 . fromIntegral . length) nm,
+                     emitLen16 nm,
                      emit16 0,
-                     (emit16 . fromIntegral . length) msg,
-                     (emit16 . fromIntegral . length) (appName gh),
+                     emitLen16 msg,
+                     emitLen16 (appName gh),
                      nm,
                      [],
                      msg,
