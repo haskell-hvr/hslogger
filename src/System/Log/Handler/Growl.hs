@@ -112,12 +112,15 @@ buildRegistration s = concat fields
 
 {- | Adds a remote machine's address to the list of targets that will
      receive log messages. Calling this function sends a registration
-     packet to the machine. -}
+     packet to the machine. This function will throw an exception if
+     the host name cannot be found. -}
 
-addTarget :: GrowlHandler -> HostAddress -> IO GrowlHandler
-addTarget gh ha = let sa = SockAddrInet (PortNum 9887) ha
-                  in do { sendTo (skt gh) (buildRegistration gh) sa
-                        ; return gh { targets = ha:(targets gh) } }
+addTarget :: GrowlHandler -> HostName -> IO GrowlHandler
+addTarget gh hn = do { he <- getHostByName hn
+                     ; let ha = hostAddress he
+                           sa = SockAddrInet (PortNum 9887) ha
+                       in do { sendTo (skt gh) (buildRegistration gh) sa
+                             ; return gh { targets = ha:(targets gh) } } }
 
 -- Converts a Priority type into the subset of integers needed in the
 -- network packet's flag field.
