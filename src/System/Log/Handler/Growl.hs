@@ -1,5 +1,5 @@
 {- arch-tag: Growl log handlers
-Copyright (C) 2007 Richard M. Neswold, Jr. <rich.neswold@gmail.com>
+Copyright (C) 2007 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 {- |
    Module     : System.Log.Handler.Growl
-   Copyright  : Copyright (C) 2007 Richard M. Neswold, Jr.
+   Copyright  : Copyright (C) 2007 John Goerzen <jgoerzen@complete.org>
    License    : GNU LGPL, version 2.1 or above
 
    Maintainer : Richard M. Neswold, Jr. <rich.neswold@gmail.com>
