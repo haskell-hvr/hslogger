@@ -60,7 +60,7 @@ instance LogHandler GrowlHandler where
 	       in mapM_ (sendNote s pkt) (targets gh) >> sClose s
 
 sendNote :: Socket -> String -> HostAddress -> IO Int
-sendNote s pkt ha = sendTo s pkt (SockAddrInet (PortNum 9887) ha)
+sendNote s pkt ha = sendTo s pkt (SockAddrInet 9887 ha)
 
 -- Right now there are two "notification names": "message" and
 -- "disconnecting". All log messages are sent using the "message"
