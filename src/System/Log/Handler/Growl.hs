@@ -118,7 +118,7 @@ buildRegistration s = concat fields
 addTarget :: HostName -> GrowlHandler -> IO GrowlHandler
 addTarget hn gh = do { he <- getHostByName hn
                      ; let ha = hostAddress he
-                           sa = SockAddrInet (PortNum 9887) ha
+                           sa = SockAddrInet 9887 ha
                        in do { sendTo (skt gh) (buildRegistration gh) sa
                              ; return gh { targets = ha:(targets gh) } } }
 
