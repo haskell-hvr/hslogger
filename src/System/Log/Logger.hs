@@ -175,7 +175,7 @@ import System.Log
 import System.Log.Handler(LogHandler)
 import qualified System.Log.Handler(handle)
 import System.Log.Handler.Simple
-import IO
+import System.IO
 import System.IO.Unsafe
 import Control.Concurrent.MVar
 import Data.List(map, isPrefixOf)

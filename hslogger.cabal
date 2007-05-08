@@ -16,7 +16,7 @@ Exposed-Modules:
     System.Log.Handler.Simple, System.Log.Handler.Syslog,
     System.Log.Handler.Growl, System.Log.Logger 
 Extensions: CPP, ExistentialQuantification
-Build-Depends: haskell98, network, base, mtl
+Build-Depends: network, base, mtl
 -- Cabal will add Unix here for Posix platforms
 GHC-Options: -O2
 

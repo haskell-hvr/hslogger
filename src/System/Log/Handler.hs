@@ -40,7 +40,7 @@ module System.Log.Handler(-- * Basic Types
                                 LogHandler(..)
                                ) where
 import System.Log
-import IO
+import System.IO
 
 {- | All log handlers should adhere to this. -}
 

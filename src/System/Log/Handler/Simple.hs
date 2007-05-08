@@ -36,7 +36,7 @@ module System.Log.Handler.Simple(streamHandler, fileHandler,
 
 import System.Log
 import System.Log.Handler
-import IO
+import System.IO
 import Control.Concurrent.MVar
 
 data GenericHandler a = GenericHandler {priority :: Priority,

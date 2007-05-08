@@ -64,11 +64,11 @@ import System.Log.Handler
 import Data.Bits
 import Network.Socket
 import Network.BSD
-import List
+import Data.List
 #ifndef mingw32_HOST_OS
 import System.Posix.Process(getProcessID)
 #endif
-import IO
+import System.IO
 
 code_of_pri :: Priority -> Int
 code_of_pri p = case p of
