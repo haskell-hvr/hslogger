@@ -1,3 +1,4 @@
+{-# OPTIONS -fglasgow-exts #-}
 {- arch-tag: Logger main definition
 Copyright (C) 2004-2006 John Goerzen <jgoerzen@complete.org>
 
