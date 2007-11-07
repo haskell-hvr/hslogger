@@ -10,19 +10,30 @@ Homepage: http://software.complete.org/hslogger
 Synopsis: Versatile logging framework
 Category: Interfaces
 extra-source-files: COPYING
-Hs-Source-Dirs: src
-Exposed-Modules: 
-  System.Log, System.Log.Handler,
-    System.Log.Handler.Simple, System.Log.Handler.Syslog,
-    System.Log.Handler.Growl, System.Log.Logger 
-Extensions: CPP, ExistentialQuantification
-Build-Depends: network, base, mtl
--- Cabal will add Unix here for Posix platforms
-GHC-Options: -O2
+Cabal-Version: >= 1.2
 
-Executable: runtests
-Buildable: False
-Main-Is: runtests.hs
-HS-Source-Dirs: testsrc, .
-Extensions: ExistentialQuantification, OverlappingInstances,
-    UndecidableInstances, CPP
+flag small_base
+  description: choose the new smaller, split-up base package.
+
+Library
+    Exposed-Modules: 
+      System.Log, System.Log.Handler,
+        System.Log.Handler.Simple, System.Log.Handler.Syslog,
+        System.Log.Handler.Growl, System.Log.Logger 
+    Extensions: CPP, ExistentialQuantification
+    Build-Depends: network, mtl
+    if !os(win32)
+        Build-Depends: unix
+    if flag(small_base)
+        build-depends: base >= 3, containers, directory, process
+    else
+        build-depends: base < 3
+    GHC-Options: -O2
+    Hs-Source-Dirs: src
+
+Executable runtests
+    Buildable: False
+    Main-Is: runtests.hs
+    HS-Source-Dirs: testsrc, .
+    Extensions: ExistentialQuantification, OverlappingInstances,
+        UndecidableInstances, CPP
