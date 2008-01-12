@@ -1,4 +1,4 @@
-hslogger (1.0.3.1) unstable; urgency=low
+hslogger (1.0.4) unstable; urgency=low
 
   * Updated for ghc6 6.8.x.
 
