@@ -8,6 +8,13 @@ Copyright: Copyright (c) 2004-2007 John Goerzen
 license-file: COPYRIGHT
 Homepage: http://software.complete.org/hslogger
 Synopsis: Versatile logging framework
+Description:  hslogger is a logging framework for Haskell, roughly similar to
+ Python's logging module.
+ .
+ hslogger lets each log message have a priority and source be associated
+ with it.  The programmer can then define global handlers that route
+ or filter messages based on the priority and source.  hslogger also
+ has a syslog handler built in.
 Category: Interfaces
 extra-source-files: COPYING
 Cabal-Version: >= 1.2
