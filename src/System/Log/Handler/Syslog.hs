@@ -96,6 +96,7 @@ data Facility =
               | UUCP                    -- ^ UUCP messages
               | CRON                    -- ^ Cron messages
               | AUTHPRIV                -- ^ Private authentication messages
+              | FTP                     -- ^ FTP messages
               | LOCAL0                  -- ^ LOCAL0 through LOCAL7 are reserved for you to customize as you wish
               | LOCAL1
               | LOCAL2
@@ -119,6 +120,7 @@ code_of_fac f = case f of
                        UUCP -> 8
                        CRON -> 9
                        AUTHPRIV -> 10
+                       FTP -> 11
                        LOCAL0 -> 16
                        LOCAL1 -> 17
                        LOCAL2 -> 18
