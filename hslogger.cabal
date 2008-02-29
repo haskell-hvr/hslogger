@@ -6,6 +6,7 @@ Author: John Goerzen
 Stability: Stable
 Copyright: Copyright (c) 2004-2008 John Goerzen
 license-file: COPYRIGHT
+build-type: Simple
 Homepage: http://software.complete.org/hslogger
 Synopsis: Versatile logging framework
 Description:  hslogger is a logging framework for Haskell, roughly similar to
