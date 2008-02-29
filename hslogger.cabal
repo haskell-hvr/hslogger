@@ -29,7 +29,7 @@ Library
         System.Log.Handler.Growl, System.Log.Logger 
     Extensions: CPP, ExistentialQuantification
     Build-Depends: network, mtl
-    if !os(win32)
+    if !os(windows)
         Build-Depends: unix
     if flag(small_base)
         build-depends: base >= 3, containers, directory, process
