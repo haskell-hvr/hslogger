@@ -1,3 +1,9 @@
+hslogger (1.0.5.0) unstable; urgency=low
+
+  * Fix bug in .cabal file.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 29 Feb 2008 06:27:45 -0600
+
 hslogger (1.0.4) unstable; urgency=low
 
   * Updated for ghc6 6.8.x.
