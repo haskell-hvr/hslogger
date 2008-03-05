@@ -31,6 +31,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 -}
 
 module System.Log.Handler.Simple(streamHandler, fileHandler,
+                                      GenericHandler (..),
                                       verboseStreamHandler)
     where
 
@@ -38,6 +39,8 @@ import System.Log
 import System.Log.Handler
 import System.IO
 import Control.Concurrent.MVar
+
+{- | A helper data type. -}
 
 data GenericHandler a = GenericHandler {priority :: Priority,
                                         privData :: a,

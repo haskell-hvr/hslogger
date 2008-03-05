@@ -17,7 +17,13 @@ Description:  hslogger is a logging framework for Haskell, roughly similar to
  or filter messages based on the priority and source.  hslogger also
  has a syslog handler built in.
 Category: Interfaces
-extra-source-files: COPYING
+extra-source-files: COPYING,
+    contrib/java/build.xml,
+    contrib/java/hslogger4j.jar,
+    contrib/java/hslogger4j-plugins.xml,
+    contrib/java/org/haskell/hslogger/HsloggerLevel.java,
+    contrib/java/org/haskell/hslogger/LogFileXMLReceiver.java,
+    contrib/java/org/haskell/hslogger/XMLDecoder.java
 Cabal-Version: >= 1.2
 
 flag small_base
@@ -27,15 +33,17 @@ Library
     Exposed-Modules: 
       System.Log, System.Log.Handler,
         System.Log.Handler.Simple, System.Log.Handler.Syslog,
-        System.Log.Handler.Growl, System.Log.Logger 
+        System.Log.Handler.Growl, System.Log.Handler.Log4jXML,
+        System.Log.Logger
     Extensions: CPP, ExistentialQuantification
     Build-Depends: network, mtl
     if !os(windows)
         Build-Depends: unix
     if flag(small_base)
-        build-depends: base >= 3, containers, directory, process
+        build-depends: base >= 3, containers, directory, process,
+                       time, old-locale
     else
-        build-depends: base < 3
+        build-depends: base < 3, time
     GHC-Options: -O2
     Hs-Source-Dirs: src
 
