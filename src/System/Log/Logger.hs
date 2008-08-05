@@ -205,6 +205,7 @@ all adhere to this class. -}
 
 -- | The name of the root logger, which is always defined and present
 -- on the system.
+rootLoggerName :: String
 rootLoggerName = ""
 
 {- | Placeholders created when a new logger must be created.  This is used
