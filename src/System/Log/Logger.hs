@@ -180,6 +180,7 @@ import System.IO
 import System.IO.Unsafe
 import Control.Concurrent.MVar
 import Data.List(map, isPrefixOf)
+import Data.Maybe
 import qualified Data.Map as Map
 import qualified Control.Exception
 import Control.Monad.Error
@@ -331,7 +332,7 @@ getLogger lname = modifyMVar logTree $ \lt ->
          Nothing -> do
                     -- Add logger(s).  Then call myself to retrieve it.
                     let newlt = createLoggers (componentsOfName lname) lt
-                    result <- Map.lookup lname newlt
+                    let result = fromJust $ Map.lookup lname newlt
                     return (newlt, result)
     where createLoggers :: [String] -> LogTree -> LogTree
           createLoggers [] lt = lt -- No names to add; return tree unmodified
@@ -347,8 +348,8 @@ getLogger lname = modifyMVar logTree $ \lt ->
           findmodellogger _ [] = error "findmodellogger: root logger does not exist?!"
           findmodellogger lt (x:xs) =
               case Map.lookup x lt of
-                Left (_::String) -> findmodellogger lt xs
-                Right logger -> logger {handlers = []}
+                Nothing -> findmodellogger lt xs
+                Just logger -> logger {handlers = []}
 
 -- | Returns the root logger.
 
