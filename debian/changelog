@@ -1,3 +1,10 @@
+hslogger (1.0.6.0) unstable; urgency=low
+
+  * Compatibility with GHC 6.10.
+  * XML Java logger support thanks to Bjorn Buckwalter
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 10 Oct 2008 14:26:02 -0500
+
 hslogger (1.0.5.0) unstable; urgency=low
 
   * Fix bug in .cabal file.
