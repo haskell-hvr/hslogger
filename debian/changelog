@@ -1,3 +1,9 @@
+hslogger (1.0.6.1) unstable; urgency=low
+
+  * Added dep on libghc6-time-dev.  Closes: #501886.
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon, 13 Oct 2008 16:01:33 -0500
+
 hslogger (1.0.6.0) unstable; urgency=low
 
   * Compatibility with GHC 6.10.
