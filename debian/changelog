@@ -1,3 +1,9 @@
+hslogger (1.0.6.2) unstable; urgency=low
+
+  * Added dh_haskell_depends
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 05 Dec 2008 13:24:42 -0600
+
 hslogger (1.0.6.1) unstable; urgency=low
 
   * Added dep on libghc6-time-dev.  Closes: #501886.
