@@ -1,3 +1,9 @@
+hslogger (1.0.7-1) unstable; urgency=low
+
+  * Fix for GHC 6.10 compatibility
+
+ -- John Goerzen <jgoerzen@complete.org>  Thu, 11 Dec 2008 08:40:49 -0600
+
 hslogger (1.0.6.2) unstable; urgency=low
 
   * Added dh_haskell_depends
