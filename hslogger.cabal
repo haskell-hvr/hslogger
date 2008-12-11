@@ -40,7 +40,7 @@ Library
     if !os(windows)
         Build-Depends: unix
     if flag(small_base)
-        build-depends: base >= 3, containers, directory, process,
+        build-depends: base >= 3 && < 4, containers, directory, process,
                        time, old-locale
     else
         build-depends: base < 3, time
