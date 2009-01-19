@@ -1,3 +1,9 @@
+hslogger (1.0.7.2) unstable; urgency=high
+
+  * Rebuild with newer GHC
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon, 19 Jan 2009 15:38:35 -0600
+
 hslogger (1.0.7.1) unstable; urgency=low
 
   * Fix for GHC 6.10 compatibility
