@@ -208,12 +208,6 @@ all adhere to this class. -}
 rootLoggerName :: String
 rootLoggerName = ""
 
-{- | Placeholders created when a new logger must be created.  This is used
-only for the root logger default for now, as all others crawl up the tree
-to find a sensible default. -}
-placeholder :: Logger
-placeholder = Logger {level = WARNING, handlers = [], name = ""}
-
 ---------------------------------------------------------------------------
 -- Logger Tree Storage
 ---------------------------------------------------------------------------
@@ -229,7 +223,7 @@ logTree =
     unsafePerformIO $ do
                       h <- streamHandler stderr DEBUG
                       newMVar (Map.singleton rootLoggerName (Logger 
-                                                   {level = WARNING,
+                                                   {level = Just WARNING,
                                                     name = "",
                                                     handlers = [HandlerT h]}))
 
@@ -354,27 +348,30 @@ logL l pri msg = handle l (pri, msg)
 -- | Handle a log request.
 handle :: Logger -> LogRecord -> IO ()
 handle l (pri, msg) = 
-    let parentHandlers [] = return []
-        parentHandlers name =
+    let parentLoggers :: String -> IO [Logger]
+        parentLoggers [] = return []
+        parentLoggers name = 
             let pname = (head . drop 1 . reverse . componentsOfName) name
-                in
-                do 
-                --putStrLn (join "," foo)
-                --putStrLn pname
-                --putStrLn "1"
-                parent <- getLogger pname
-                --putStrLn "2"
-                next <- parentHandlers pname
-                --putStrLn "3"
-                return ((handlers parent) ++ next)
+                in 
+                do parent <- getLogger pname
+                   next <- parentLoggers pname
+                   return (parent : next)
+        parentHandlers :: String -> IO [HandlerT]
+        parentHandlers name = parentLoggers name >>= (return . concatMap handlers)
+        getLoggerPriority :: String -> IO Priority
+        getLoggerPriority name =
+            do pl <- parentLoggers name
+               case catMaybes . map level $ (l : pl) of
+                 [] -> return DEBUG
+                 (x:_) -> return x
         in
-        if pri >= (level l)
-           then do 
+        do lp <- getLoggerPriority (name l)
+           if pri >= lp
+              then do 
                 ph <- parentHandlers (name l)
                 sequence_ (handlerActions (ph ++ (handlers l)) (pri, msg)
                                           (name l))
-           else return ()
-
+              else return ()
 
 -- | Call a handler given a HandlerT.
 callHandler :: LogRecord -> String -> HandlerT -> IO ()
@@ -399,14 +396,20 @@ setHandlers hl l =
 -- | Returns the "level" of the logger.  Items beneath this
 -- level will be ignored.
 
-getLevel :: Logger -> Priority
+getLevel :: Logger -> Maybe Priority
 getLevel l = level l
 
 -- | Sets the "level" of the 'Logger'.  Returns a new
 -- 'Logger' object with the new level.
 
 setLevel :: Priority -> Logger -> Logger
-setLevel p l = l{level = p}
+setLevel p l = l{level = Just p}
+
+-- | Clears the "level" of the 'Logger'.  It will now inherit the level of
+-- | its parent.
+
+clearLevel :: Logger -> Logger
+clearLevel l = l {level = Nothing}
 
 -- | Updates the global record for the given logger to take into
 -- account any changes you may have made.
