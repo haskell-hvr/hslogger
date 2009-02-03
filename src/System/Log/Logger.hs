@@ -1,6 +1,6 @@
 {-# OPTIONS -fglasgow-exts #-}
 {- arch-tag: Logger main definition
-Copyright (C) 2004-2006 John Goerzen <jgoerzen@complete.org>
+Copyright (C) 2004-2009 John Goerzen <jgoerzen@complete.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 {- |
    Module     : System.Log.Logger
-   Copyright  : Copyright (C) 2004-2006 John Goerzen
+   Copyright  : Copyright (C) 2004-2009 John Goerzen
    License    : GNU LGPL, version 2.1 or above
 
    Maintainer : John Goerzen <jgoerzen@complete.org> 
@@ -165,7 +165,7 @@ but other functions won't see the changes.  To make a change global,
 you'll need to use 'updateGlobalLogger' or 'saveGlobalLogger'.
 -}
                                addHandler, setHandlers,
-                               getLevel, setLevel,
+                               getLevel, setLevel, clearLevel,
                                -- ** Saving Your Changes
 {- | These functions commit changes you've made to loggers to the global
 logger hierarchy. -}
@@ -189,10 +189,9 @@ import Control.Monad.Error
 ---------------------------------------------------------------------------
 data HandlerT = forall a. LogHandler a => HandlerT a
 
-data Logger = Logger { level :: Priority,
+data Logger = Logger { level :: Maybe Priority,
                        handlers :: [HandlerT],
                        name :: String}
-
 
 type LogTree = Map.Map String Logger
 
@@ -340,16 +339,8 @@ getLogger lname = modifyMVar logTree $ \lt ->
               if Map.member x lt
                  then createLoggers xs lt
                  else createLoggers xs 
-                          (Map.insert x ((modellogger lt) {name=x}) lt)
-          modellogger :: LogTree -> Logger
-          -- the modellogger is what we use for adding new loggers
-          modellogger lt =
-              findmodellogger lt (reverse $ componentsOfName lname)
-          findmodellogger _ [] = error "findmodellogger: root logger does not exist?!"
-          findmodellogger lt (x:xs) =
-              case Map.lookup x lt of
-                Nothing -> findmodellogger lt xs
-                Just logger -> logger {handlers = []}
+                          (Map.insert x (defaultLogger {name=x}) lt)
+          defaultLogger = Logger Nothing [] undefined
 
 -- | Returns the root logger.
 
