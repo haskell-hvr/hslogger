@@ -72,6 +72,16 @@ of to process.  What's more, it is also passed to /all handlers of all
 ancestors of the Logger/, regardless of whether those 'Logger's would
 normally have passed on the message.
 
+Each 'Logger' can /optionally/ store a 'Priority'.  If a given Logger does
+not have a Priority, and you log a message to that logger, the system will
+use the priority of the parent of the destination logger to find out whether
+to log the message.  If the parent has no priority associated with it,
+the system continues walking up the tree to figure out a priority until
+it hits the root logger.  In this way, you can easily adjust the priority
+of an entire subtree of loggers.  When a new logger is created, it has no
+priority by default.  The exception is the root logger, which has a WARNING
+priority by default.
+
 To give you one extra little knob to turn, 'LogHandler's can also have
 importance levels ('Priority') associated with them in the same way
 that 'Logger's do.  They act just like the 'Priority' value in the
@@ -148,7 +158,7 @@ module System.Log.Logger(
 special things to be aware of.
 
 First of all, whenever you first access a given logger by name, it
-magically springs to life.  It has a default 'Priority' of 'DEBUG'
+magically springs to life.  It has a default 'Priority' of Nothing
 and an empty handler list -- which means that it will inherit whatever its
 parents do.
 -}
@@ -358,6 +368,10 @@ handle l (pri, msg) =
                    return (parent : next)
         parentHandlers :: String -> IO [HandlerT]
         parentHandlers name = parentLoggers name >>= (return . concatMap handlers)
+
+        -- Get the priority we should use.  Find the first logger in the tree,
+        -- starting here, with a set priority.  If even root doesn't have one,
+        -- assume DEBUG.
         getLoggerPriority :: String -> IO Priority
         getLoggerPriority name =
             do pl <- parentLoggers name
