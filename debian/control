@@ -9,7 +9,7 @@ Section: devel
 Package: libghc6-hslogger-dev
 Section: devel
 Architecture: any
-Depends: ${haskell:Depends}, libghc6-network-dev, libghc6-unix-dev, libghc6-mtl-dev, libghc6-time-dev
+Depends: ${haskell:Depends}
 Suggests: hslogger-doc
 Description: The Haskell Logging Framework, GHC package
  hslogger is a logging framework for Haskell, roughly similar to
