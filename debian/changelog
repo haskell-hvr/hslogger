@@ -1,3 +1,10 @@
+hslogger (1.0.8-1) unstable; urgency=low
+
+  * Now non-native package
+  * Rebuild with GHC 6.10.
+
+ -- John Goerzen <jgoerzen@complete.org>  Mon, 16 Mar 2009 10:23:03 -0500
+
 hslogger (1.0.7.2) unstable; urgency=high
 
   * Rebuild with newer GHC
