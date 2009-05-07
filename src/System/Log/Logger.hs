@@ -121,7 +121,7 @@ Here's an example to illustrate some of these concepts:
 >        -- Also, we'd like to still ignore things less than
 >        -- WARNING in other areas.
 >        -- 
->        -- So, we adjust the Logger for MyApp.Component.
+>        -- So, we adjust the Logger for MyApp.BuggyComponent.
 >
 >        updateGlobalLogger "MyApp.BuggyComponent"
 >                           (setLevel DEBUG)
