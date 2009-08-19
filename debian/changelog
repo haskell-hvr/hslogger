@@ -1,3 +1,10 @@
+hslogger (1.0.8-2) unstable; urgency=low
+
+  * Rebuild with newer network lib.
+  * Convert to team maintenance.
+
+ -- John Goerzen <jgoerzen@complete.org>  Wed, 19 Aug 2009 16:30:52 -0500
+
 hslogger (1.0.8-1) unstable; urgency=low
 
   * Now non-native package
