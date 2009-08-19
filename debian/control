@@ -1,10 +1,13 @@
 Source: hslogger
 Priority: optional
-Maintainer: John Goerzen <jgoerzen@complete.org>
+Maintainer: Debian Haskell Group <pkg-haskell-maintainers@lists.alioth.debian.org>
+Uploaders: John Goerzen <jgoerzen@complete.org>
 Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.10), haskell-devscripts (>= 0.6.15), cpphs, libghc6-network-dev, ghc6 (>= 6.10), libghc6-mtl-dev, libghc6-hunit-dev, libghc6-time-dev
 Build-Depends-Indep: debhelper (>= 4.0.0), haddock, hugs (>= 98.200503.08), haskell-devscripts (>= 0.6.15), ghc6 (>= 6.10), cpphs, libhugs-hunit, libhugs-mtl, libhugs-network
 Standards-Version: 3.6.2
 Section: devel
+Vcs-Git: git://git.debian.org/git/pkg-haskell/hslogger.git
+Vcs-Browser: http://git.debian.org/?p=pkg-haskell/hslogger.git;a=summary
 
 Package: libghc6-hslogger-dev
 Section: devel
