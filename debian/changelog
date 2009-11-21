@@ -6,6 +6,7 @@ hslogger (1.0.8-2+nmu1) UNRELEASED; urgency=low
   * debian/control
     - Depend on haskell-devscripts >= 0.6.18.
     - Move Build-Depends-Indeps to Build-Depends.
+    - Add hscolour to build deps.
     - Standards-Version 3.8.3
     - Section haskell.
    * debian/compat
