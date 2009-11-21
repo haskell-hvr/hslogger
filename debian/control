@@ -2,18 +2,30 @@ Source: hslogger
 Priority: optional
 Maintainer: Debian Haskell Group <pkg-haskell-maintainers@lists.alioth.debian.org>
 Uploaders: John Goerzen <jgoerzen@complete.org>
-Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.10), haskell-devscripts (>= 0.6.15), cpphs, libghc6-network-dev, ghc6 (>= 6.10), libghc6-mtl-dev, libghc6-hunit-dev, libghc6-time-dev
-Build-Depends-Indep: debhelper (>= 4.0.0), haddock, hugs (>= 98.200503.08), haskell-devscripts (>= 0.6.15), ghc6 (>= 6.10), cpphs, libhugs-hunit, libhugs-mtl, libhugs-network
-Standards-Version: 3.6.2
-Section: devel
+Build-Depends: debhelper (>= 5.0.0),
+ cdbs,
+ haskell-devscripts (>= 0.6.18),
+ cpphs,
+ haddock,
+ ghc6 (>= 6.10),
+ libghc6-mtl-dev,
+ libghc6-hunit-dev,
+ libghc6-time-dev,
+ hugs (>= 98.200503.08),
+ libhugs-hunit,
+ libhugs-mtl,
+ libhugs-network,
+ libghc6-network-dev
+Standards-Version: 3.8.3
+Section: haskell
 Vcs-Git: git://git.debian.org/git/pkg-haskell/hslogger.git
 Vcs-Browser: http://git.debian.org/?p=pkg-haskell/hslogger.git;a=summary
 
 Package: libghc6-hslogger-dev
-Section: devel
+Section: haskell
 Architecture: any
-Depends: ${haskell:Depends}
-Suggests: hslogger-doc
+Depends: ${misc:Depends}, ${haskell:Depends}
+Suggests:  ${haskell:Suggests}
 Description: The Haskell Logging Framework, GHC package
  hslogger is a logging framework for Haskell, roughly similar to
  Python's logging module.
@@ -24,10 +36,10 @@ Description: The Haskell Logging Framework, GHC package
  has a syslog handler built in.
 
 Package: libhugs-hslogger
-Section: devel
+Section: haskell
 Architecture: all
-Depends: ${haskell:Depends}, libhugs-mtl, libhugs-network
-Suggests: hslogger-doc
+Depends: ${misc:Depends},  ${haskell:Depends}
+Suggests: ${haskell:Suggests}
 Description: The Haskell Logging Framework, Hugs package
  hslogger is a logging framework for Haskell, roughly similar to
  Python's logging module.
@@ -40,6 +52,7 @@ Description: The Haskell Logging Framework, Hugs package
 Package: hslogger-doc
 Section: doc
 Architecture: all
+Depends: ${misc:Depends}
 Description: The Haskell Logging Framework, API Documentation
  hslogger is a logging framework for Haskell, roughly similar to
  Python's logging module.

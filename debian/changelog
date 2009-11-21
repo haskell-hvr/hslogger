@@ -1,3 +1,18 @@
+hslogger (1.0.8-2+nmu1) UNRELEASED; urgency=low
+
+  * NMU upload ok-ed by regular maintainer.
+  * debian/rules
+    - Convert to hlibrary.mk (dh_haskell was removed to haskell-devscripts).
+  * debian/control
+    - Depend on haskell-devscripts >= 0.6.18.
+    - Move Build-Depends-Indeps to Build-Depends.
+    - Standards-Version 3.8.3
+    - Section haskell.
+   * debian/compat
+    - Version 5
+
+ -- Erik de Castro Lopo <erikd@mega-nerd.com>  Sat, 21 Nov 2009 14:28:37 +1100
+
 hslogger (1.0.8-2) unstable; urgency=low
 
   * Rebuild with newer network lib.
