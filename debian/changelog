@@ -1,4 +1,4 @@
-hslogger (1.0.8-2+nmu1) UNRELEASED; urgency=low
+hslogger (1.0.8-2+nmu1) unstable; urgency=low
 
   * NMU upload ok-ed by regular maintainer.
   * debian/rules
@@ -12,7 +12,7 @@ hslogger (1.0.8-2+nmu1) UNRELEASED; urgency=low
    * debian/compat
     - Version 5
 
- -- Erik de Castro Lopo <erikd@mega-nerd.com>  Sat, 21 Nov 2009 14:28:37 +1100
+ -- Erik de Castro Lopo <erikd@mega-nerd.com>  Tue,  1 Dec 2009 05:11:19 +1100
 
 hslogger (1.0.8-2) unstable; urgency=low
 
