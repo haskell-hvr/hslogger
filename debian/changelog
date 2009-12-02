@@ -1,6 +1,5 @@
-hslogger (1.0.8-2+nmu1) unstable; urgency=low
+hslogger (1.0.8-3) unstable; urgency=low
 
-  * NMU upload ok-ed by regular maintainer.
   * debian/rules
     - Convert to hlibrary.mk (dh_haskell was removed to haskell-devscripts).
   * debian/control
