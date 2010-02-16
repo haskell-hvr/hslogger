@@ -1,10 +1,10 @@
 Name: hslogger
-Version: 1.0.8
+Version: 1.0.9
 License: LGPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
 Stability: Stable
-Copyright: Copyright (c) 2004-2009 John Goerzen
+Copyright: Copyright (c) 2004-2010 John Goerzen
 license-file: COPYRIGHT
 build-type: Simple
 Homepage: http://software.complete.org/hslogger
@@ -40,7 +40,7 @@ Library
     if !os(windows)
         Build-Depends: unix
     if flag(small_base)
-        build-depends: base >= 3 && < 4, containers, directory, process,
+        build-depends: base >= 3 && < 5, containers, directory, process,
                        time, old-locale
     else
         build-depends: base < 3, time
