@@ -18,8 +18,8 @@ all: setup
 	./setup configure
 	./setup build
 
-setup: Setup.lhs
-	ghc --make -o setup Setup.lhs
+setup: Setup.hs
+	ghc --make -o setup Setup.hs
 
 install: setup
 	./setup install
