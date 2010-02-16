@@ -462,6 +462,7 @@ traplogging logger priority desc action =
     let realdesc = case desc of
                              "" -> ""
                              x -> x ++ ": "
+        handler :: Control.Exception.SomeException -> IO a
         handler e = do
                     logM logger priority (realdesc ++ (show e))
                     Control.Exception.throw e             -- Re-raise it
