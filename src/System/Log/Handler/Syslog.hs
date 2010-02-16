@@ -185,7 +185,7 @@ openlog_local :: String                 -- ^ Path to FIFO
 openlog_local fifopath ident options fac pri =
     do
     s <- socket AF_UNIX Datagram 0
-    openlog_generic s (SockAddrUnix "/dev/log") ident options fac pri
+    openlog_generic s (SockAddrUnix fifopath) ident options fac pri
 #endif
 
 {- | Log to a remote server via UDP. -}
