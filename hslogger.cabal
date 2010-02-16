@@ -28,6 +28,9 @@ Cabal-Version: >= 1.2
 
 flag small_base
   description: choose the new smaller, split-up base package.
+flag buildtests
+  description: Build the executable to run unit tests
+  default: False
 
 Library
     Exposed-Modules: 
@@ -48,7 +51,10 @@ Library
     Hs-Source-Dirs: src
 
 Executable runtests
-    Buildable: False
+    if flag(buildtests)
+      Buildable: True
+    else
+      Buildable: False
     Main-Is: runtests.hs
     HS-Source-Dirs: testsrc, .
     Extensions: ExistentialQuantification, OverlappingInstances,
