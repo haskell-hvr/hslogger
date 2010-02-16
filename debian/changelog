@@ -2,8 +2,9 @@ hslogger (1.0.9-1) unstable; urgency=low
 
   * New upstream version.
   * Rebuild for GHC 6.12.
+  * Drop Hugs support due to broken Hugs cabal support.
 
- -- John Goerzen <jgoerzen@complete.org>  Tue, 16 Feb 2010 15:55:02 -0600
+ -- John Goerzen <jgoerzen@complete.org>  Tue, 16 Feb 2010 16:15:41 -0600
 
 hslogger (1.0.8-3) unstable; urgency=low
 
