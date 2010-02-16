@@ -23,7 +23,10 @@ extra-source-files: COPYING,
     contrib/java/hslogger4j-plugins.xml,
     contrib/java/org/haskell/hslogger/HsloggerLevel.java,
     contrib/java/org/haskell/hslogger/LogFileXMLReceiver.java,
-    contrib/java/org/haskell/hslogger/XMLDecoder.java
+    contrib/java/org/haskell/hslogger/XMLDecoder.java,
+    testsrc/Tests.hs,
+    testsrc/runtests.hs,
+    winbuild.bat
 Cabal-Version: >= 1.2
 
 flag small_base
