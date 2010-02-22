@@ -1,5 +1,5 @@
 Name: hslogger
-Version: 1.0.9
+Version: 1.0.10
 License: LGPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
@@ -46,7 +46,7 @@ Library
     if !os(windows)
         Build-Depends: unix
     if flag(small_base)
-        build-depends: base >= 3 && < 5, containers, directory, process,
+        build-depends: base >= 4 && < 5, containers, directory, process,
                        time, old-locale
     else
         build-depends: base < 3, time
