@@ -166,6 +166,8 @@ openlog :: String                       -- ^ The name of this program -- will be
 
 #ifdef mingw32_HOST_OS
 openlog = openlog_remote AF_INET "localhost" 514
+#elif darwin_HOST_OS
+openlog = openlog_local "/var/run/syslog"
 #else
 openlog = openlog_local "/dev/log"
 #endif
