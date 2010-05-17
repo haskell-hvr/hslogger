@@ -40,6 +40,7 @@ module System.Log.Handler(-- * Basic Types
                                 LogHandler(..)
                                ) where
 import System.Log
+import System.Log.Formatter
 import System.IO
 
 {- | All log handlers should adhere to this. -}
@@ -53,13 +54,18 @@ class LogHandler a where
                    setLevel :: a -> Priority -> a
                    -- | Gets the current level.
                    getLevel :: a -> Priority
+                   -- | Set a log formatter to customize the log format for this Handler
+                   setFormatter :: a -> LogFormatter a -> a
+                   getFormatter :: a -> LogFormatter a
+                   getFormatter h = nullFormatter
                    -- | Logs an event if it meets the requirements
                    -- given by the most recent call to 'setLevel'.
                    handle :: a -> LogRecord -> String-> IO ()
 
                    handle h (pri, msg) logname = 
                        if pri >= (getLevel h)
-                          then emit h (pri, msg) logname
+                          then do formattedMsg <- (getFormatter h) h (pri,msg) logname
+                                  emit h (pri, formattedMsg) logname
                           else return ()
                    -- | Forces an event to be logged regardless of
                    -- the configured level.
@@ -67,6 +73,7 @@ class LogHandler a where
                    -- | Closes the logging system, causing it to close
                    -- any open files, etc.
                    close :: a -> IO ()
+
 
 
 
