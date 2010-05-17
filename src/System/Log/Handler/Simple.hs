@@ -37,20 +37,24 @@ module System.Log.Handler.Simple(streamHandler, fileHandler,
 
 import System.Log
 import System.Log.Handler
+import System.Log.Formatter
 import System.IO
 import Control.Concurrent.MVar
 
 {- | A helper data type. -}
 
 data GenericHandler a = GenericHandler {priority :: Priority,
+                                        formatter :: LogFormatter (GenericHandler a),
                                         privData :: a,
-                                        writeFunc :: a -> LogRecord -> String -> IO (),
+                                        writeFunc :: a -> String -> IO (),
                                         closeFunc :: a -> IO () }
 
 instance LogHandler (GenericHandler a) where
     setLevel sh p = sh{priority = p}
     getLevel sh = priority sh
-    emit sh lr loggername = (writeFunc sh) (privData sh) lr loggername
+    setFormatter sh f = sh{formatter = f}
+    getFormatter sh = formatter sh
+    emit sh (_,msg) _ = (writeFunc sh) (privData sh) msg
     close sh = (closeFunc sh) (privData sh)
 
 
@@ -62,11 +66,12 @@ instance LogHandler (GenericHandler a) where
 streamHandler :: Handle -> Priority -> IO (GenericHandler Handle)
 streamHandler h pri = 
     do lock <- newMVar ()
-       let mywritefunc hdl (_, msg) _ = 
+       let mywritefunc hdl msg = 
                withMVar lock (\_ -> do hPutStrLn hdl msg
                                        hFlush hdl
                              )
        return (GenericHandler {priority = pri,
+                               formatter = nullFormatter,
                                privData = h,
                                writeFunc = mywritefunc,
                                closeFunc = \x -> return ()})
@@ -85,16 +90,6 @@ fileHandler fp pri = do
 {- | Like 'streamHandler', but note the priority and logger name along
 with each message. -}
 verboseStreamHandler :: Handle -> Priority -> IO (GenericHandler Handle)
-verboseStreamHandler h pri =
-    do lock <- newMVar ()
-       let mywritefunc hdl (prio, msg) loggername = 
-               withMVar lock (\_ -> do hPutStrLn hdl ("[" ++ loggername 
-                                                          ++ "/" ++
-                                                          show prio ++
-                                                          "] " ++ msg)
-                                       hFlush hdl
-                             )
-       return (GenericHandler {priority = pri,
-                               privData = h,
-                               writeFunc = mywritefunc,
-                               closeFunc = \x -> return ()})
+verboseStreamHandler h pri = let fmt = simpleLogFormatter "[$loggername/$prio] $msg"
+                             in do hndlr <- streamHandler h pri
+                                   return $ setFormatter hndlr fmt
