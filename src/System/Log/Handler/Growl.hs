@@ -39,8 +39,10 @@ import Network.Socket
 import Network.BSD
 import System.Log
 import System.Log.Handler
+import System.Log.Formatter
 
 data GrowlHandler = GrowlHandler { priority :: Priority,
+                                   formatter :: LogFormatter GrowlHandler,
                                    appName :: String,
                                    skt :: Socket,
                                    targets :: [HostAddress] }
@@ -50,6 +52,9 @@ instance LogHandler GrowlHandler where
     setLevel gh p = gh { priority = p }
 
     getLevel = priority
+               
+    setFormatter gh f = gh { formatter = f }
+    getFormatter = formatter
 
     emit gh lr _ = let pkt = buildNotification gh nmGeneralMsg lr
 		   in mapM_ (sendNote (skt gh) pkt) (targets gh)
@@ -81,7 +86,7 @@ growlHandler :: String          -- ^ The name of the service
              -> IO GrowlHandler
 growlHandler nm pri =
     do { s <- socket AF_INET Datagram 0
-       ; return GrowlHandler { priority = pri, appName = nm,
+       ; return GrowlHandler { priority = pri, appName = nm, formatter=nullFormatter,
                                skt = s, targets = [] }
        }
 
