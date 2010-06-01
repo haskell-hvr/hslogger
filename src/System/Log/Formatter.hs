@@ -20,7 +20,9 @@ module System.Log.Formatter( LogFormatter
 import Data.List
 import Control.Applicative ((<$>))
 import Control.Concurrent (myThreadId)
+#ifndef mingw32_HOST_OS
 import System.Posix.Process (getProcessID)
+#endif
 
 import System.Locale (defaultTimeLocale)
 import Data.Time (getZonedTime,getCurrentTime,formatTime)
@@ -52,7 +54,7 @@ nullFormatter _ (_,msg) _ = return msg
 --
 --    * @$tid@  - The thread ID
 --
---    * @$pid@  - Process ID
+--    * @$pid@  - Process ID  (Not available on windows)
 --
 --    * @$time@ - The current time 
 --
@@ -80,7 +82,9 @@ varFormatter vars format h (prio,msg) loggername = do
                                  ,("prio", return $ show prio)
                                  ,("loggername", return loggername)
                                  ,("tid", show <$> myThreadId)
+#ifndef mingw32_HOST_OS
                                  ,("pid", show <$> getProcessID)
+#endif
                                  ]
                           ) 
                   format
