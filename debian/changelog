@@ -1,3 +1,10 @@
+hslogger (1.0.9-3) unstable; urgency=low
+
+  * Fields added in debian/control to ensure a smooth transition from the
+    old to the new documentation package.
+
+ -- Giovanni Mascellani <gio@debian.org>  Sat, 03 Jul 2010 16:26:20 +0200
+
 hslogger (1.0.9-2) unstable; urgency=low
 
   * Enabling profiling libraries.

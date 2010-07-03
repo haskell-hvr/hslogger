@@ -68,6 +68,9 @@ Architecture: all
 Depends: ${misc:Depends}
 Suggests: ${haskell:Suggests}
 Recommends: ${haskell:Depends}, ${haskell:Recommends}
+Provides: hslogger-doc
+Conflicts: hslogger-doc
+Replaces: hslogger-doc
 Description: The Haskell Logging Framework, API Documentation
  hslogger is a logging framework for Haskell, roughly similar to
  Python's logging module.
