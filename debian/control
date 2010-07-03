@@ -31,8 +31,10 @@ Vcs-Browser: http://git.debian.org/?p=pkg-haskell/hslogger.git;a=summary
 Package: libghc6-hslogger-dev
 Section: haskell
 Architecture: any
-Depends: ${misc:Depends}, ${haskell:Depends}
-Suggests:  ${haskell:Suggests}
+Depends: ${misc:Depends}, ${haskell:Depends}, ${shlibs:Depends}
+Suggests: ${haskell:Suggests}
+Recommends: ${haskell:Recommends}
+Provides: ${haskell:Provides}
 Description: The Haskell Logging Framework, GHC package
  hslogger is a logging framework for Haskell, roughly similar to
  Python's logging module.
@@ -46,7 +48,9 @@ Package: libghc6-hslogger-prof
 Section: haskell
 Architecture: any
 Depends: ${misc:Depends}, ${haskell:Depends}
-Suggests:  ${haskell:Suggests}
+Suggests: ${haskell:Suggests}
+Recommends: ${haskell:Recommends}
+Provides: ${haskell:Provides}
 Description: The Haskell Logging Framework, GHC profiling libraries
  hslogger is a logging framework for Haskell, roughly similar to
  Python's logging module.
@@ -63,6 +67,8 @@ Package: libghc6-hslogger-doc
 Section: doc
 Architecture: all
 Depends: ${misc:Depends}
+Suggests: ${haskell:Suggests}
+Recommends: ${haskell:Depends}, ${haskell:Recommends}
 Description: The Haskell Logging Framework, API Documentation
  hslogger is a logging framework for Haskell, roughly similar to
  Python's logging module.
