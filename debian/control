@@ -17,7 +17,7 @@ Build-Depends: debhelper (>= 5.0.0),
  libghc6-time-prof,
  libghc6-network-dev,
  libghc6-network-prof
-Standards-Version: 3.8.3
+Standards-Version: 3.9.0
 Section: haskell
 Vcs-Git: git://git.debian.org/git/pkg-haskell/hslogger.git
 Vcs-Browser: http://git.debian.org/?p=pkg-haskell/hslogger.git;a=summary

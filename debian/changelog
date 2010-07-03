@@ -1,8 +1,9 @@
 hslogger (1.0.9-2) unstable; urgency=low
 
   * Enabling profiling libraries.
+  * Policy version bumped to 3.9.0 (no changes needed)
 
- -- Giovanni Mascellani <gio@debian.org>  Sat, 03 Jul 2010 14:51:59 +0200
+ -- Giovanni Mascellani <gio@debian.org>  Sat, 03 Jul 2010 15:13:47 +0200
 
 hslogger (1.0.9-1) unstable; urgency=low
 
