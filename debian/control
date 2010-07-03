@@ -25,11 +25,11 @@ Build-Depends-Indep:
  libghc6-network-doc
 Standards-Version: 3.9.0
 Section: haskell
+Homepage: http://hackage.haskell.org/package/hslogger
 Vcs-Git: git://git.debian.org/git/pkg-haskell/hslogger.git
 Vcs-Browser: http://git.debian.org/?p=pkg-haskell/hslogger.git;a=summary
 
 Package: libghc6-hslogger-dev
-Section: haskell
 Architecture: any
 Depends: ${misc:Depends}, ${haskell:Depends}, ${shlibs:Depends}
 Suggests: ${haskell:Suggests}
@@ -45,7 +45,6 @@ Description: The Haskell Logging Framework, GHC package
  has a syslog handler built in.
 
 Package: libghc6-hslogger-prof
-Section: haskell
 Architecture: any
 Depends: ${misc:Depends}, ${haskell:Depends}
 Suggests: ${haskell:Suggests}
