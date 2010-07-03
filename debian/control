@@ -10,9 +10,13 @@ Build-Depends: debhelper (>= 5.0.0),
  hscolour,
  ghc6 (>= 6.12),
  libghc6-mtl-dev,
+ libghc6-mtl-prof,
  libghc6-hunit-dev,
+ libghc6-hunit-prof,
  libghc6-time-dev,
- libghc6-network-dev
+ libghc6-time-prof,
+ libghc6-network-dev,
+ libghc6-network-prof
 Standards-Version: 3.8.3
 Section: haskell
 Vcs-Git: git://git.debian.org/git/pkg-haskell/hslogger.git
@@ -31,6 +35,23 @@ Description: The Haskell Logging Framework, GHC package
  with it.  The programmer can then define global handlers that route
  or filter messages based on the priority and source.  hslogger also
  has a syslog handler built in.
+
+Package: libghc6-hslogger-prof
+Section: haskell
+Architecture: any
+Depends: ${misc:Depends}, ${haskell:Depends}
+Suggests:  ${haskell:Suggests}
+Description: The Haskell Logging Framework, GHC profiling libraries
+ hslogger is a logging framework for Haskell, roughly similar to
+ Python's logging module.
+ .
+ hslogger lets each log message have a priority and source be associated
+ with it.  The programmer can then define global handlers that route
+ or filter messages based on the priority and source.  hslogger also
+ has a syslog handler built in.
+ .
+ This package contains the libraries used to profile programs linked
+ against hslogger.
 
 Package: hslogger-doc
 Section: doc
