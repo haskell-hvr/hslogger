@@ -1,14 +1,15 @@
 Source: hslogger
-Priority: optional
+Priority: extra
 Maintainer: Debian Haskell Group <pkg-haskell-maintainers@lists.alioth.debian.org>
 Uploaders: John Goerzen <jgoerzen@complete.org>
 Build-Depends: debhelper (>= 5.0.0),
  cdbs,
- haskell-devscripts (>= 0.6.18),
+ haskell-devscripts (>= 0.7),
  cpphs,
  haddock,
  hscolour,
  ghc6 (>= 6.12),
+ ghc6-prof,
  libghc6-mtl-dev,
  libghc6-mtl-prof,
  libghc6-hunit-dev,
@@ -65,9 +66,9 @@ Description: The Haskell Logging Framework, GHC profiling libraries
 Package: libghc6-hslogger-doc
 Section: doc
 Architecture: all
-Depends: ${misc:Depends}
+Depends: ${misc:Depends}, ${haskell:Depends}
 Suggests: ${haskell:Suggests}
-Recommends: ${haskell:Depends}, ${haskell:Recommends}
+Recommends: ${haskell:Recommends}
 Provides: hslogger-doc
 Conflicts: hslogger-doc
 Replaces: hslogger-doc

@@ -1,3 +1,9 @@
+hslogger (1.0.9-4) unstable; urgency=low
+
+  * Some miscellaneous small fixes, suggested by Iain Lane.
+
+ -- Giovanni Mascellani <gio@debian.org>  Mon, 05 Jul 2010 00:27:24 +0200
+
 hslogger (1.0.9-3) unstable; urgency=low
 
   * Fields added in debian/control to ensure a smooth transition from the
