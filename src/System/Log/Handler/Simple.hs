@@ -35,6 +35,10 @@ module System.Log.Handler.Simple(streamHandler, fileHandler,
                                       verboseStreamHandler)
     where
 
+import Prelude hiding (catch)
+import Control.Exception (SomeException, catch)
+import Data.Char (ord)
+
 import System.Log
 import System.Log.Handler
 import System.IO
@@ -60,16 +64,27 @@ instance LogHandler (GenericHandler a) where
    the underlying stream.  -}
 
 streamHandler :: Handle -> Priority -> IO (GenericHandler Handle)
-streamHandler h pri = 
+streamHandler h pri =
     do lock <- newMVar ()
-       let mywritefunc hdl (_, msg) _ = 
-               withMVar lock (\_ -> do hPutStrLn hdl msg
+       let mywritefunc hdl msg =
+               withMVar lock (\_ -> do writeToHandle hdl msg
                                        hFlush hdl
                              )
        return (GenericHandler {priority = pri,
                                privData = h,
                                writeFunc = mywritefunc,
                                closeFunc = \x -> return ()})
+    where
+      writeToHandle hdl msg =
+          hPutStrLn hdl msg `catch` (handleWriteException hdl msg)
+      handleWriteException :: Handle -> String -> SomeException -> IO ()
+      handleWriteException hdl msg e =
+          let msg' = "Error writing log message: " ++ show e ++
+                     " (original message: " ++ msg ++ ")"
+          in hPutStrLn hdl (encodingSave msg')
+      encodingSave = concatMap (\c -> if ord c > 127
+                                         then "\\" ++ show (ord c)
+                                         else [c])
 
 {- | Create a file log handler.  Log messages sent to this handler
    will be sent to the filename specified, which will be opened
