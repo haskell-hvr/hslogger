@@ -66,7 +66,7 @@ instance LogHandler (GenericHandler a) where
 streamHandler :: Handle -> Priority -> IO (GenericHandler Handle)
 streamHandler h pri =
     do lock <- newMVar ()
-       let mywritefunc hdl msg =
+       let mywritefunc hdl (_, msg) _ =
                withMVar lock (\_ -> do writeToHandle hdl msg
                                        hFlush hdl
                              )
