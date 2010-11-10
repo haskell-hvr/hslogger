@@ -39,6 +39,7 @@ Library
     Exposed-Modules: 
       System.Log, System.Log.Handler, System.Log.Formatter,
         System.Log.Handler.Simple, System.Log.Handler.Syslog,
+        System.Log.Handler.Rotating,
         System.Log.Handler.Growl, System.Log.Handler.Log4jXML,
         System.Log.Logger
     Extensions: CPP, ExistentialQuantification
