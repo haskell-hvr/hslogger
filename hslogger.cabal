@@ -1,5 +1,5 @@
 Name: hslogger
-Version: 1.1.2
+Version: 1.1.3
 License: LGPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
@@ -42,7 +42,7 @@ Library
         System.Log.Handler.Growl, System.Log.Handler.Log4jXML,
         System.Log.Logger
     Extensions: CPP, ExistentialQuantification
-    Build-Depends: network < 2.3, mtl
+    Build-Depends: network < 2.3.0.2, mtl
     if !os(windows)
         Build-Depends: unix
     if flag(small_base)
