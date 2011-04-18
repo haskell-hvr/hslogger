@@ -4,33 +4,33 @@ Maintainer: Debian Haskell Group <pkg-haskell-maintainers@lists.alioth.debian.or
 Uploaders: John Goerzen <jgoerzen@complete.org>
 Build-Depends: debhelper (>= 5.0.0),
  cdbs,
- haskell-devscripts (>= 0.7),
+ haskell-devscripts (>= 0.8),
  cpphs,
  haddock,
  hscolour,
- ghc6 (>= 6.12),
- ghc6-prof,
- libghc6-mtl-dev,
- libghc6-mtl-prof,
- libghc6-hunit-dev,
- libghc6-hunit-prof,
- libghc6-time-dev,
- libghc6-time-prof,
- libghc6-network-dev,
- libghc6-network-prof
+ ghc,
+ ghc-prof,
+ libghc-mtl-dev,
+ libghc-mtl-prof,
+ libghc-hunit-dev,
+ libghc-hunit-prof,
+ libghc-time-dev,
+ libghc-time-prof,
+ libghc-network-dev,
+ libghc-network-prof
 Build-Depends-Indep:
- ghc6-doc,
- libghc6-mtl-doc,
- libghc6-hunit-doc,
- libghc6-time-doc,
- libghc6-network-doc
+ ghc-doc,
+ libghc-mtl-doc,
+ libghc-hunit-doc,
+ libghc-time-doc,
+ libghc-network-doc
 Standards-Version: 3.9.0
 Section: haskell
 Homepage: http://hackage.haskell.org/package/hslogger
 Vcs-Git: git://git.debian.org/git/pkg-haskell/hslogger.git
 Vcs-Browser: http://git.debian.org/?p=pkg-haskell/hslogger.git;a=summary
 
-Package: libghc6-hslogger-dev
+Package: libghc-hslogger-dev
 Architecture: any
 Depends: ${misc:Depends}, ${haskell:Depends}, ${shlibs:Depends}
 Suggests: ${haskell:Suggests}
@@ -45,7 +45,7 @@ Description: The Haskell Logging Framework, GHC package
  or filter messages based on the priority and source.  hslogger also
  has a syslog handler built in.
 
-Package: libghc6-hslogger-prof
+Package: libghc-hslogger-prof
 Architecture: any
 Depends: ${misc:Depends}, ${haskell:Depends}
 Suggests: ${haskell:Suggests}
@@ -63,7 +63,7 @@ Description: The Haskell Logging Framework, GHC profiling libraries
  This package contains the libraries used to profile programs linked
  against hslogger.
 
-Package: libghc6-hslogger-doc
+Package: libghc-hslogger-doc
 Section: doc
 Architecture: all
 Depends: ${misc:Depends}, ${haskell:Depends}
