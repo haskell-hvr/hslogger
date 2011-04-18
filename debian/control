@@ -26,7 +26,7 @@ Build-Depends-Indep:
  libghc-network-doc
 Standards-Version: 3.9.0
 Section: haskell
-Homepage: http://hackage.haskell.org/package/hslogger
+Homepage: http://software.complete.org/hslogger
 Vcs-Git: git://git.debian.org/git/pkg-haskell/hslogger.git
 Vcs-Browser: http://git.debian.org/?p=pkg-haskell/hslogger.git;a=summary
 
