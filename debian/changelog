@@ -1,11 +1,11 @@
-hslogger (1.0.10-1) UNRELEASED; urgency=low
+hslogger (1.0.10-1) unstable; urgency=low
 
   * s/ghc6/ghc/
   * Use debhelper 7
   * Use more appropriate homepage
   * New upstream version, it seems (gbp is confusing me)
 
- -- Joachim Breitner <nomeata@debian.org>  Mon, 18 Apr 2011 13:20:16 +0530
+ -- Joachim Breitner <nomeata@debian.org>  Mon, 18 Apr 2011 13:37:11 +0530
 
 hslogger (1.0.9-4) unstable; urgency=low
 
