@@ -1,6 +1,7 @@
 hslogger (1.0.9-4.1) UNRELEASED; urgency=low
 
   * s/ghc6/ghc/
+  * Use debhelper 7
 
  -- Joachim Breitner <nomeata@debian.org>  Mon, 18 Apr 2011 13:20:16 +0530
 
