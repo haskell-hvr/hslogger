@@ -1,3 +1,9 @@
+hslogger (1.0.10-2) UNRELEASED; urgency=low
+
+  * Mention hslogger2j, remove .jar on clean, build it in build
+
+ -- Joachim Breitner <nomeata@debian.org>  Mon, 18 Apr 2011 15:48:28 +0530
+
 hslogger (1.0.10-1) unstable; urgency=low
 
   * s/ghc6/ghc/

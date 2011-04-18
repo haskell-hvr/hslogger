@@ -20,6 +20,10 @@ The GNU General Public License is available in the file COPYING in the source
 distribution.  Debian GNU/Linux users may find this in
 /usr/share/common-licenses/LGPL-2.1.
 
-If the LGPL is unacceptable for your uses, please e-mail me; alternative
+If the LGPL is unacceptable for your uses, please e-mail the author; alternative
 terms can be negotiated for your project.
 
+The files in contrib/java are copyright
+	© 1999,2004 The Apache Software Foundation
+and distributed unter the Apache License, Version 2.0. Debian GNU/Linux users
+may find this licenses in /usr/share/common-licenses/Apache-2.0
