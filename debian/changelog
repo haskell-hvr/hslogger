@@ -1,9 +1,9 @@
-hslogger (1.0.10+dfsg1-1) UNRELEASED; urgency=low
+hslogger (1.0.10+dfsg1-1) unstable; urgency=low
 
   * Repack original tarball to remove java files with unclear distributability
     status.
 
- -- Joachim Breitner <nomeata@debian.org>  Mon, 18 Apr 2011 15:48:28 +0530
+ -- Joachim Breitner <nomeata@debian.org>  Wed, 20 Apr 2011 14:18:16 +0530
 
 hslogger (1.0.10-1) unstable; urgency=low
 
