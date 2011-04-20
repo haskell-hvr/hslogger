@@ -1,6 +1,7 @@
-hslogger (1.0.10-2) UNRELEASED; urgency=low
+hslogger (1.0.10+dfsg1-1) UNRELEASED; urgency=low
 
-  * Mention hslogger2j, remove .jar on clean, build it in build
+  * Repack original tarball to remove java files with unclear distributability
+    status.
 
  -- Joachim Breitner <nomeata@debian.org>  Mon, 18 Apr 2011 15:48:28 +0530
 

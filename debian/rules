@@ -3,12 +3,3 @@
 # Standard way of building Haskell libraries .
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/hlibrary.mk
-
-build/libghc-hslogger-dev::
-	cd contrib/java/; ant
-
-clean::
-	cd contrib/java/; ant clean
-	rm -f contrib/java/hslogger4j.jar
-	
-
