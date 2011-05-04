@@ -45,7 +45,7 @@ module System.Log(-- * Types
 
     where
 
-{- | Priorities are used to define how important a log messgae is.
+{- | Priorities are used to define how important a log message is.
 Users can filter log messages based on priorities.
 
 These have their roots on the traditional syslog system.  The standard
