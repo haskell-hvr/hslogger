@@ -1,3 +1,9 @@
+hslogger (1.1.4+dfsg1-1) unstable; urgency=low
+
+  * New upstream release (Closes: #627530)
+
+ -- Joachim Breitner <nomeata@debian.org>  Tue, 24 May 2011 15:10:47 +0200
+
 hslogger (1.0.10+dfsg1-1) unstable; urgency=low
 
   * Repack original tarball to remove java files with unclear distributability
