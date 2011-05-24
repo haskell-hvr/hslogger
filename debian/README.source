@@ -1,0 +1,5 @@
+The original source contains some contributed java code including a compiled
+.jar file. To be on the safe side, we remove this directory before uploading
+the tarball to Debian. This is how I do it:
+
+ver=1.1.4 ; zcat hslogger-$ver.tar.gz |tar -f - --delete hslogger-$ver/contrib/ |  gzip -9 > hslogger_$ver+dfsg1.orig.tar.gz
