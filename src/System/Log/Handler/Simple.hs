@@ -35,22 +35,30 @@ module System.Log.Handler.Simple(streamHandler, fileHandler,
                                       verboseStreamHandler)
     where
 
+import Prelude hiding (catch)
+import Control.Exception (SomeException, catch)
+import Data.Char (ord)
+
 import System.Log
 import System.Log.Handler
+import System.Log.Formatter
 import System.IO
 import Control.Concurrent.MVar
 
 {- | A helper data type. -}
 
 data GenericHandler a = GenericHandler {priority :: Priority,
+                                        formatter :: LogFormatter (GenericHandler a),
                                         privData :: a,
-                                        writeFunc :: a -> LogRecord -> String -> IO (),
+                                        writeFunc :: a -> String -> IO (),
                                         closeFunc :: a -> IO () }
 
 instance LogHandler (GenericHandler a) where
     setLevel sh p = sh{priority = p}
     getLevel sh = priority sh
-    emit sh lr loggername = (writeFunc sh) (privData sh) lr loggername
+    setFormatter sh f = sh{formatter = f}
+    getFormatter sh = formatter sh
+    emit sh (_,msg) _ = (writeFunc sh) (privData sh) msg
     close sh = (closeFunc sh) (privData sh)
 
 
@@ -60,16 +68,28 @@ instance LogHandler (GenericHandler a) where
    the underlying stream.  -}
 
 streamHandler :: Handle -> Priority -> IO (GenericHandler Handle)
-streamHandler h pri = 
+streamHandler h pri =
     do lock <- newMVar ()
-       let mywritefunc hdl (_, msg) _ = 
-               withMVar lock (\_ -> do hPutStrLn hdl msg
+       let mywritefunc hdl msg =
+               withMVar lock (\_ -> do writeToHandle hdl msg
                                        hFlush hdl
                              )
        return (GenericHandler {priority = pri,
+                               formatter = nullFormatter,
                                privData = h,
                                writeFunc = mywritefunc,
                                closeFunc = \x -> return ()})
+    where
+      writeToHandle hdl msg =
+          hPutStrLn hdl msg `catch` (handleWriteException hdl msg)
+      handleWriteException :: Handle -> String -> SomeException -> IO ()
+      handleWriteException hdl msg e =
+          let msg' = "Error writing log message: " ++ show e ++
+                     " (original message: " ++ msg ++ ")"
+          in hPutStrLn hdl (encodingSave msg')
+      encodingSave = concatMap (\c -> if ord c > 127
+                                         then "\\" ++ show (ord c)
+                                         else [c])
 
 {- | Create a file log handler.  Log messages sent to this handler
    will be sent to the filename specified, which will be opened
@@ -85,16 +105,6 @@ fileHandler fp pri = do
 {- | Like 'streamHandler', but note the priority and logger name along
 with each message. -}
 verboseStreamHandler :: Handle -> Priority -> IO (GenericHandler Handle)
-verboseStreamHandler h pri =
-    do lock <- newMVar ()
-       let mywritefunc hdl (prio, msg) loggername = 
-               withMVar lock (\_ -> do hPutStrLn hdl ("[" ++ loggername 
-                                                          ++ "/" ++
-                                                          show prio ++
-                                                          "] " ++ msg)
-                                       hFlush hdl
-                             )
-       return (GenericHandler {priority = pri,
-                               privData = h,
-                               writeFunc = mywritefunc,
-                               closeFunc = \x -> return ()})
+verboseStreamHandler h pri = let fmt = simpleLogFormatter "[$loggername/$prio] $msg"
+                             in do hndlr <- streamHandler h pri
+                                   return $ setFormatter hndlr fmt
