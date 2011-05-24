@@ -96,10 +96,18 @@ of the logger hierarchy.  It is always present, and handlers attached
 there will be called for every message.  You can use 'getRootLogger' to get
 it or 'rootLoggerName' to work with it by name.
 
+The formatting of log messages may be customized by setting a 'LogFormatter'
+on the desired 'LogHandler'.  There are a number of simple formatters defined 
+in "System.Log.Formatter", which may be used directly, or extend to create
+your own formatter.
+
 Here's an example to illustrate some of these concepts:
 
 > import System.Log.Logger
 > import System.Log.Handler.Syslog
+> import System.Log.Handler.Simple
+> import System.Log.Handler (setFormatter)
+> import System.Log.Formatter
 > 
 > -- By default, all messages of level WARNING and above are sent to stderr.
 > -- Everything else is ignored.
@@ -134,7 +142,21 @@ Here's an example to illustrate some of these concepts:
 > 
 >        -- This message goes nowhere.
 >        debugM "MyApp.WorkingComponent" "Hello"
-
+>
+>        -- Now we decide we'd also like to log everything from BuggyComponent at DEBUG
+>        -- or higher to a file for later diagnostics.  We'd also like to customize the
+>        -- format of the log message, so we use a 'simpleLogFormatter'
+>
+>        h <- fileHandler "debug.log" DEBUG >>= \lh -> return $
+>                 setFormatter lh (simpleLogFormatter "[$time : $loggername : $prio] $msg")
+>        updateGlobalLogger "MyApp.BuggyComponent" (addHandler h)
+>       
+>        -- This message will go to syslog and stderr, 
+>        -- and to the file "debug.log" with a format like :
+>        -- [2010-05-23 16:47:28 : MyApp.BuggyComponent : DEBUG] Some useful diagnostics...
+>        debugM "MyApp.BuggyComponent" "Some useful diagnostics..."
+>
+>
 -}
 
 module System.Log.Logger(
@@ -184,6 +206,7 @@ logger hierarchy. -}
                                ) where
 import System.Log
 import System.Log.Handler(LogHandler)
+import System.Log.Formatter(LogFormatter)
 import qualified System.Log.Handler(handle)
 import System.Log.Handler.Simple
 import System.IO

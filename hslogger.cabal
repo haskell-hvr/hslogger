@@ -1,10 +1,10 @@
 Name: hslogger
-Version: 1.0.10
+Version: 1.1.4
 License: LGPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
 Stability: Stable
-Copyright: Copyright (c) 2004-2010 John Goerzen
+Copyright: Copyright (c) 2004-2011 John Goerzen
 license-file: COPYRIGHT
 build-type: Simple
 Homepage: http://software.complete.org/hslogger
@@ -37,12 +37,12 @@ flag buildtests
 
 Library
     Exposed-Modules: 
-      System.Log, System.Log.Handler,
+      System.Log, System.Log.Handler, System.Log.Formatter,
         System.Log.Handler.Simple, System.Log.Handler.Syslog,
         System.Log.Handler.Growl, System.Log.Handler.Log4jXML,
         System.Log.Logger
     Extensions: CPP, ExistentialQuantification
-    Build-Depends: network, mtl
+    Build-Depends: network < 2.4, mtl
     if !os(windows)
         Build-Depends: unix
     if flag(small_base)

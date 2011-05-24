@@ -60,6 +60,7 @@ module System.Log.Handler.Syslog(
                                        ) where
 
 import System.Log
+import System.Log.Formatter
 import System.Log.Handler
 import Data.Bits
 import Network.Socket
@@ -147,7 +148,9 @@ data SyslogHandler = SyslogHandler {options :: [Option],
                                     identity :: String,
                                     logsocket :: Socket,
                                     address :: SockAddr,
-                                    priority :: Priority}
+                                    priority :: Priority,
+                                    formatter :: LogFormatter SyslogHandler
+                                   }
 
 {- | Initialize the Syslog system using the local system's default interface,
 \/dev\/log.  Will return a new 'System.Log.Handler.LogHandler'.
@@ -166,6 +169,8 @@ openlog :: String                       -- ^ The name of this program -- will be
 
 #ifdef mingw32_HOST_OS
 openlog = openlog_remote AF_INET "localhost" 514
+#elif darwin_HOST_OS
+openlog = openlog_local "/var/run/syslog"
 #else
 openlog = openlog_local "/dev/log"
 #endif
@@ -219,39 +224,45 @@ openlog_generic sock addr ident opt fac pri =
                             identity = ident,
                             logsocket = sock,
                             address = addr,
-                            priority = pri})
+                            priority = pri,
+                            formatter = syslogFormatter
+                          })
+
+syslogFormatter :: LogFormatter SyslogHandler
+syslogFormatter sh (p,msg) logname =
+    let code = makeCode (facility sh) p
+        getpid :: IO String
+        getpid = 
+#ifndef mingw32_HOST_OS
+                     getProcessID >>= return . show
+#else
+                     return "windows"
+#endif
+        vars = [("code", return $ show code)
+               ,("identity", return $ identity sh)
+               ,("pid", getpid)]
+        withPid = if (elem PID (options sh)) then "[$pid]" else ""
+        format = "<$code>$identity"++withPid++": [$loggername/$prio] $msg"
+    in varFormatter vars format sh (p,msg) logname
+
 
 instance LogHandler SyslogHandler where
     setLevel sh p = sh{priority = p}
     getLevel sh = priority sh
-    emit sh (p, msg) loggername = 
-        let code = makeCode (facility sh) p
-            getpid :: IO String
-            getpid = if (elem PID (options sh))
-                     then do
-#ifndef mingw32_HOST_OS
-                          pid <- getProcessID
-#else
-                          let pid = "windows"
-#endif
-                          return ("[" ++ show pid ++ "]")
-                     else return ""
-                     
+    setFormatter sh f = sh{formatter = f}
+    getFormatter sh = formatter sh
+    emit sh (_, msg) _ = 
+        let                      
             sendstr :: String -> IO String
             sendstr [] = return []
             sendstr omsg = do
                            sent <- sendTo (logsocket sh) omsg (address sh)
                            sendstr (genericDrop sent omsg)
-            in
-            do
-            pidstr <- getpid
-            let outstr = "<" ++ (show code) ++ ">" 
-                         ++ (identity sh) ++ pidstr ++ ": "
-                         ++ "[" ++ loggername ++ "/" ++ (show p) ++ "] " ++ msg
-            if (elem PERROR (options sh))
-               then hPutStrLn stderr outstr
+        in do
+          if (elem PERROR (options sh))
+               then hPutStrLn stderr msg
                else return ()
-            sendstr (outstr ++ "\0")
-            return ()
+          sendstr (msg ++ "\0")
+          return ()
     close sh = sClose (logsocket sh)
 

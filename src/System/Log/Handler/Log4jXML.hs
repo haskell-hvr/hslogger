@@ -130,34 +130,30 @@ import System.IO
 import System.Locale (defaultTimeLocale)
 import Data.Time
 import System.Log
-import System.Log.Handler.Simple (GenericHandler (..))
+import System.Log.Handler
+import System.Log.Handler.Simple (streamHandler, GenericHandler(..))
 
 
 -- Handler that logs to a handle rendering message priorities according
 -- to the supplied function.
 log4jHandler :: (Priority -> String) -> Handle -> Priority -> IO (GenericHandler Handle)
 log4jHandler showPrio h pri = do
-    lock <- newMVar ()
-    let mywritefunc hdl (prio, msg) loggername = withMVar lock (\_ -> do
-        time   <- getCurrentTime
-        thread <- myThreadId
-        hPutStrLn hdl (show $ createMessage loggername time prio thread msg)
-        hFlush hdl
-        )
-    return (GenericHandler { priority  = pri,
-                             privData  = h,
-                             writeFunc = mywritefunc,
-                             closeFunc = \x -> return () })
-    where
-        -- Creates an XML element representing a log4j event/message.
-        createMessage :: String -> UTCTime -> Priority -> ThreadId -> String -> XML
-        createMessage logger time prio thread msg = Elem "log4j:event"
-            [ ("logger"   , logger       )
-            , ("timestamp", millis time  )
-            , ("level"    , showPrio prio)
-            , ("thread"   , show thread  )
-            ]
-            (Just $ Elem "log4j:message" [] (Just $ CDATA msg))
+    hndlr <- streamHandler h pri
+    return $ setFormatter hndlr xmlFormatter
+
+   where
+        -- A Log Formatter that creates an XML element representing a log4j event/message.
+        xmlFormatter :: a -> (Priority,String) -> String -> IO String
+        xmlFormatter _ (prio,msg) logger = do
+              time <- getCurrentTime
+              thread <- myThreadId
+              return . show $ Elem "log4j:event"
+                         [ ("logger"   , logger       )
+                         , ("timestamp", millis time  )
+                         , ("level"    , showPrio prio)
+                         , ("thread"   , show thread  )
+                         ]
+                         (Just $ Elem "log4j:message" [] (Just $ CDATA msg))
             where
                 -- This is an ugly hack to get a unix epoch with milliseconds.
                 -- The use of "take 3" causes the milliseconds to always be
