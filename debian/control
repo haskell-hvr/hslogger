@@ -9,10 +9,9 @@ Build-Depends: debhelper (>= 5.0.0),
  haddock,
  hscolour,
  ghc6 (>= 6.12),
- libghc6-mtl-dev,
- libghc6-hunit-dev,
- libghc6-time-dev,
- libghc6-network-dev
+ libghc-mtl-dev,
+ libghc-hunit-dev,
+ libghc-network-dev
 Standards-Version: 3.8.3
 Section: haskell
 Vcs-Git: git://git.debian.org/git/pkg-haskell/hslogger.git
