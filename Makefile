@@ -25,7 +25,7 @@ install: setup
 	./setup install
 
 clean:
-	./Setup.lhs clean
+	runhaskell ./Setup.hs clean
 
 .PHONY: test
 test: test-ghc test-hugs
