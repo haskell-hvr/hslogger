@@ -1,11 +1,11 @@
 Name: hslogger
-Version: 1.1.4
-License: LGPL
+Version: 1.1.5
+License: BSD3
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
 Stability: Stable
 Copyright: Copyright (c) 2004-2011 John Goerzen
-license-file: COPYRIGHT
+license-file: LICENSE
 build-type: Simple
 Homepage: http://software.complete.org/hslogger
 Synopsis: Versatile logging framework
@@ -17,7 +17,7 @@ Description:  hslogger is a logging framework for Haskell, roughly similar to
  or filter messages based on the priority and source.  hslogger also
  has a syslog handler built in.
 Category: Interfaces
-extra-source-files: COPYING,
+extra-source-files: LICENSE,
     contrib/java/build.xml,
     contrib/java/hslogger4j.jar,
     contrib/java/hslogger4j-plugins.xml,
@@ -36,7 +36,7 @@ flag buildtests
   default: False
 
 Library
-    Exposed-Modules: 
+    Exposed-Modules:
       System.Log, System.Log.Handler, System.Log.Formatter,
         System.Log.Handler.Simple, System.Log.Handler.Syslog,
         System.Log.Handler.Growl, System.Log.Handler.Log4jXML,

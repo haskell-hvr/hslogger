@@ -1,3 +1,7 @@
+{-
+Copyright (c) 2005-2011 John Goerzen
+License: BSD3
+-}
 {- |
 
 Definition of log formatter support
