@@ -452,6 +452,14 @@ updateGlobalLogger ln func =
     do l <- getLogger ln
        saveGlobalLogger (func l)
 
+-- | Allow gracefull shutdown. Release all opened files/handlers/etc.
+removeAllHandlers :: IO ()
+removeAllHandlers =
+    modifyMVar_ logTree $ \lt -> do
+        let allHandlers = Map.fold (\l r -> concat [r, handlers l]) [] lt
+        mapM_ (\(HandlerT h) -> close h) allHandlers
+        return $ Map.map (\l -> l {handlers = []}) lt
+
 {- | Traps exceptions that may occur, logging them, then passing them on.
 
 Takes a logger name, priority, leading description text (you can set it to
