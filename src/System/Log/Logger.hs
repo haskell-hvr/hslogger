@@ -187,7 +187,7 @@ logger hierarchy. -}
                                updateGlobalLogger
                                ) where
 import System.Log
-import System.Log.Handler(LogHandler)
+import System.Log.Handler(LogHandler, close)
 import System.Log.Formatter(LogFormatter)
 import qualified System.Log.Handler(handle)
 import System.Log.Handler.Simple
