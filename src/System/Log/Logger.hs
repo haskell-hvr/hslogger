@@ -154,6 +154,7 @@ module System.Log.Logger(
                                -- make your job easier.
                                debugM, infoM, noticeM, warningM, errorM,
                                criticalM, alertM, emergencyM,
+                               removeAllHandlers,
                                traplogging,
                                -- ** Logging to a particular Logger by object
                                logL,
