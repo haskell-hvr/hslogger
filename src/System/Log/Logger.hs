@@ -154,6 +154,7 @@ module System.Log.Logger(
                                -- make your job easier.
                                debugM, infoM, noticeM, warningM, errorM,
                                criticalM, alertM, emergencyM,
+                               removeAllHandlers,
                                traplogging,
                                -- ** Logging to a particular Logger by object
                                logL,
@@ -187,7 +188,7 @@ logger hierarchy. -}
                                updateGlobalLogger
                                ) where
 import System.Log
-import System.Log.Handler(LogHandler)
+import System.Log.Handler(LogHandler, close)
 import System.Log.Formatter(LogFormatter)
 import qualified System.Log.Handler(handle)
 import System.Log.Handler.Simple
@@ -451,6 +452,14 @@ updateGlobalLogger :: String            -- ^ Logger name
 updateGlobalLogger ln func =
     do l <- getLogger ln
        saveGlobalLogger (func l)
+
+-- | Allow gracefull shutdown. Release all opened files/handlers/etc.
+removeAllHandlers :: IO ()
+removeAllHandlers =
+    modifyMVar_ logTree $ \lt -> do
+        let allHandlers = Map.fold (\l r -> concat [r, handlers l]) [] lt
+        mapM_ (\(HandlerT h) -> close h) allHandlers
+        return $ Map.map (\l -> l {handlers = []}) lt
 
 {- | Traps exceptions that may occur, logging them, then passing them on.
 
