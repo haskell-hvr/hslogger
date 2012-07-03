@@ -18,7 +18,7 @@ module System.Log.Handler.Simple(streamHandler, fileHandler,
     where
 
 import Prelude hiding (catch)
-import Control.Exception (SomeException, catch)
+import Control.Exception (catch)
 import Data.Char (ord)
 
 import System.Log
@@ -64,7 +64,7 @@ streamHandler h pri =
     where
       writeToHandle hdl msg =
           hPutStrLn hdl msg `catch` (handleWriteException hdl msg)
-      handleWriteException :: Handle -> String -> SomeException -> IO ()
+      handleWriteException :: Handle -> String -> IOError -> IO ()
       handleWriteException hdl msg e =
           let msg' = "Error writing log message: " ++ show e ++
                      " (original message: " ++ msg ++ ")"
