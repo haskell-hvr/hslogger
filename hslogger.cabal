@@ -1,10 +1,10 @@
 Name: hslogger
-Version: 1.1.6
+Version: 1.2.0
 License: BSD3
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
 Stability: Stable
-Copyright: Copyright (c) 2004-2011 John Goerzen
+Copyright: Copyright (c) 2004-2012 John Goerzen
 license-file: LICENSE
 build-type: Simple
 Homepage: http://software.complete.org/hslogger
