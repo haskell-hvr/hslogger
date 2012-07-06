@@ -17,7 +17,9 @@ module System.Log.Handler.Simple(streamHandler, fileHandler,
                                       verboseStreamHandler)
     where
 
+#if !MIN_VERSION_base(4,6,0)
 import Prelude hiding (catch)
+#endif
 import Control.Exception (SomeException, catch)
 import Data.Char (ord)
 
