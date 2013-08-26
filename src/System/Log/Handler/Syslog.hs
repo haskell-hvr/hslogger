@@ -193,7 +193,7 @@ openlog_local fifopath ident options fac pri =
 
         fallbackToDgram :: Socket -> IO (Socket, SocketType)
         fallbackToDgram s =
-            do S.close s -- close Stream variant
+            do S.sClose s -- close Stream variant
                d <- socket AF_UNIX Datagram 0
                return (d, Datagram)
 #endif
