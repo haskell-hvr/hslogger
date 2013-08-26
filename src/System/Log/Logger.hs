@@ -1,4 +1,3 @@
-{-# OPTIONS -fglasgow-exts #-}
 {- |
    Module     : System.Log.Logger
    Copyright  : Copyright (C) 2004-2011 John Goerzen
