@@ -54,6 +54,7 @@ import Data.List
 import System.Posix.Process(getProcessID)
 #endif
 import System.IO
+import Control.Monad (void, when)
 
 code_of_pri :: Priority -> Int
 code_of_pri p = case p of
@@ -237,20 +238,8 @@ openlog_generic sock addr sock_t ident opt fac pri =
 
 syslogFormatter :: LogFormatter SyslogHandler
 syslogFormatter sh (p,msg) logname =
-    let code = makeCode (facility sh) p
-        getpid :: IO String
-        getpid = 
-#ifndef mingw32_HOST_OS
-                     getProcessID >>= return . show
-#else
-                     return "windows"
-#endif
-        vars = [("code", return $ show code)
-               ,("identity", return $ identity sh)
-               ,("pid", getpid)]
-        withPid = if (elem PID (options sh)) then "[$pid]" else ""
-        format = "<$code>$identity"++withPid++": [$loggername/$prio] $msg"
-    in varFormatter vars format sh (p,msg) logname
+    let format = "[$loggername/$prio] $msg"
+    in varFormatter [] format sh (p,msg) logname
 
 
 instance LogHandler SyslogHandler where
@@ -258,20 +247,31 @@ instance LogHandler SyslogHandler where
     getLevel sh = priority sh
     setFormatter sh f = sh{formatter = f}
     getFormatter sh = formatter sh
-    emit sh (_, msg) _ =
-        let
-            sendstr :: String -> IO String
-            sendstr [] = return []
-            sendstr omsg = do
-                           sent <- case sock_type sh of
-                                       Datagram -> sendTo (logsocket sh) omsg (address sh)
-                                       Stream   -> send   (logsocket sh) omsg
-                           sendstr (genericDrop sent omsg)
-        in do
-          if (elem PERROR (options sh))
-               then hPutStrLn stderr msg
-               else return ()
-          sendstr (msg ++ "\0")
-          return ()
-    close sh = sClose (logsocket sh)
+    emit sh (_, msg) _ = do
+      when (elem PERROR (options sh)) (hPutStrLn stderr msg)
+      pidPart <- getPidPart
+      void $ sendstr (toSyslogFormat msg pidPart)
+      where
+        sendstr :: String -> IO String
+        sendstr [] = return []
+        sendstr omsg = do
+          sent <- case sock_type sh of
+                    Datagram -> sendTo (logsocket sh) omsg (address sh)
+                    Stream   -> send   (logsocket sh) omsg
+          sendstr (genericDrop sent omsg)
+        toSyslogFormat msg pidPart =
+            "<" ++ code ++ ">" ++ identity' ++ pidPart ++ ": " ++ msg ++ "\0"
+        code = show (makeCode (facility sh) (priority sh))
+        identity' = identity sh
+        getPidPart = if elem PID (options sh)
+                     then getPid >>= \pid -> return ("[" ++ pid ++ "]")
+                     else return ""
+        getPid :: IO String
+        getPid =
+#ifndef mingw32_HOST_OS
+          getProcessID >>= return . show
+#else
+          return "windows"
+#endif
 
+    close sh = sClose (logsocket sh)
