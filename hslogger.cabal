@@ -42,7 +42,7 @@ Library
         System.Log.Handler.Growl, System.Log.Handler.Log4jXML,
         System.Log.Logger
     Extensions: CPP, ExistentialQuantification
-    Build-Depends: network < 2.5, mtl
+    Build-Depends: network < 2.6, mtl
     if !os(windows)
         Build-Depends: unix
     if flag(small_base)
