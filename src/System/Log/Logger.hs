@@ -178,7 +178,7 @@ global 'Logger' hierarchy.  You may use your new 'Logger's locally,
 but other functions won't see the changes.  To make a change global,
 you'll need to use 'updateGlobalLogger' or 'saveGlobalLogger'.
 -}
-                               addHandler, setHandlers,
+                               addHandler, removeHandler, setHandlers,
                                getLevel, setLevel, clearLevel,
                                -- ** Saving Your Changes
 {- | These functions commit changes you've made to loggers to the global
@@ -401,10 +401,30 @@ callHandler lr loggername ht =
 -- | Generate IO actions for the handlers.
 handlerActions :: [HandlerT] -> LogRecord -> String -> [IO ()]
 handlerActions h lr loggername = map (callHandler lr loggername ) h
-                         
+
 -- | Add handler to 'Logger'.  Returns a new 'Logger'.
 addHandler :: LogHandler a => a -> Logger -> Logger
 addHandler h l= l{handlers = (HandlerT h) : (handlers l)}
+
+-- | Remove a handler from the 'Logger'.  Handlers are removed in the reverse
+-- order they were added, so the following property holds for any 'LogHandler'
+-- @h@:
+--
+-- > removeHandler . addHandler h = id
+--
+-- If no handlers are associated with the 'Logger', it is returned unchanged.
+--
+-- The root logger's default handler that writes every message to stderr can
+-- be removed by using this function before any handlers have been added
+-- to the root logger:
+--
+-- > updateGlobalLogger rootLoggerName removeHandler
+removeHandler :: Logger -> Logger
+removeHandler l =
+    case hs of [] -> l
+               _  -> l{handlers = tail hs}
+  where
+    hs = handlers l
 
 -- | Set the 'Logger'\'s list of handlers to the list supplied.
 -- All existing handlers are removed first.
@@ -481,7 +501,7 @@ traplogging logger priority desc action =
                     Control.Exception.throw e             -- Re-raise it
         in
         Control.Exception.catch action handler
-    
+
 {- This function pulled in from MissingH to avoid a dep on it -}
 split :: Eq a => [a] -> [a] -> [[a]]
 split _ [] = []
