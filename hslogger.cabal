@@ -1,5 +1,5 @@
 Name: hslogger
-Version: 1.2.3
+Version: 1.2.4
 License: BSD3
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
@@ -42,7 +42,7 @@ Library
         System.Log.Handler.Growl, System.Log.Handler.Log4jXML,
         System.Log.Logger
     Extensions: CPP, ExistentialQuantification
-    Build-Depends: network < 2.5, mtl
+    Build-Depends: network, mtl
     if !os(windows)
         Build-Depends: unix
     if flag(small_base)
