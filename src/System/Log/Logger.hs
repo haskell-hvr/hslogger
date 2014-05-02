@@ -138,16 +138,34 @@ Here's an example to illustrate some of these concepts:
 >        debugM "MyApp.BuggyComponent" "Some useful diagnostics..."
 >
 >
+
+The hierarchy of loggers in is stored in a global 'LogTree', created
+with 'unsafePerformIO'. If this is unsuitable (e.g., using hslogging and the
+GHC interpreter API), the logger hierarchy may be explicitly threaded through
+the program as in this example:
+
+> import System.Log.Logger
+>
+> main = do
+>        logTree <- newLogTree
+>        infoM' logTree "MyApp" "Using a local logger tree!"
+>
+>
+
+In general, the explicitly threaded versions are named with a prime, and take
+a 'LogTree' as their first argument. Otherwise, the functionality is
+exactly the same.
 -}
 
 module System.Log.Logger(
                                -- * Basic Types
-                               Logger,
+                               Logger, LogTree,
                                -- ** Re-Exported from System.Log
                                Priority(..),
                                -- * Logging Messages
                                -- ** Basic
                                logM,
+                               logM',
                                -- ** Utility Functions
                                -- These functions are wrappers for 'logM' to
                                -- make your job easier.
@@ -155,8 +173,13 @@ module System.Log.Logger(
                                criticalM, alertM, emergencyM,
                                removeAllHandlers,
                                traplogging,
+                               debugM', infoM', noticeM', warningM', errorM',
+                               criticalM', alertM', emergencyM',
+                               removeAllHandlers',
+                               traplogging',
                                -- ** Logging to a particular Logger by object
                                logL,
+                               logL',
                                -- * Logger Manipulation
 {- | These functions help you work with loggers.  There are some
 special things to be aware of.
@@ -168,6 +191,8 @@ parents do.
 -}
                                -- ** Finding \/ Creating Loggers
                                getLogger, getRootLogger, rootLoggerName,
+                               getLogger', getRootLogger',
+                               newLogTree,
                                -- ** Modifying Loggers
 {- | Keep in mind that \"modification\" here is modification in the Haskell
 sense.  We do not actually cause mutation in a specific 'Logger'.  Rather,
@@ -184,7 +209,9 @@ you'll need to use 'updateGlobalLogger' or 'saveGlobalLogger'.
 {- | These functions commit changes you've made to loggers to the global
 logger hierarchy. -}
                                saveGlobalLogger,
-                               updateGlobalLogger
+                               updateGlobalLogger,
+                               saveGlobalLogger',
+                               updateGlobalLogger'
                                ) where
 import System.Log
 import System.Log.Handler(LogHandler, close)
@@ -208,7 +235,7 @@ data Logger = Logger { level :: Maybe Priority,
                        handlers :: [HandlerT],
                        name :: String}
 
-type LogTree = Map.Map String Logger
+newtype LogTree = LogTree (MVar (Map.Map String Logger))
 
 {- | This is the base class for the various log handlers.  They should
 all adhere to this class. -}
@@ -230,17 +257,24 @@ rootLoggerName = ""
 -- | The log tree.  Initialize it with a default root logger 
 -- and (FIXME) a logger for MissingH itself.
 
-{-# NOINLINE logTree #-}
+{-# NOINLINE globalLogTree #-}
 
-logTree :: MVar LogTree
+globalLogTree :: LogTree
+globalLogTree = unsafePerformIO newLogTree
+
+{- | Create a new LogTree and containing MVar. -}
+newLogTree :: IO LogTree
 -- note: only kick up tree if handled locally
-logTree = 
-    unsafePerformIO $ do
-                      h <- streamHandler stderr DEBUG
-                      newMVar (Map.singleton rootLoggerName (Logger 
-                                                   {level = Just WARNING,
-                                                    name = "",
-                                                    handlers = [HandlerT h]}))
+newLogTree = 
+    let tree h = Map.singleton rootLoggerName 
+                               (Logger 
+                                {level = Just WARNING,
+                                 name = "",
+                                 handlers = [HandlerT h]})
+        in
+        do
+        h <- streamHandler stderr DEBUG
+        fmap LogTree $ newMVar (tree h)
 
 {- | Given a name, return all components of it, starting from the root.
 Example return value: 
@@ -264,14 +298,21 @@ componentsOfName name =
 
 {- | Log a message using the given logger at a given priority. -}
 
+logM' :: LogTree                     -- ^ Log tree
+      -> String                           -- ^ Name of the logger to use
+      -> Priority                         -- ^ Priority of this message
+      -> String                           -- ^ The log text itself
+      -> IO ()
+
+logM' logTree logname pri msg = do
+                               l <- getLogger' logTree logname
+                               logL' logTree l pri msg
+
 logM :: String                           -- ^ Name of the logger to use
      -> Priority                         -- ^ Priority of this message
      -> String                           -- ^ The log text itself
      -> IO ()
-
-logM logname pri msg = do
-                       l <- getLogger logname
-                       logL l pri msg
+logM = logM' globalLogTree
 
 ---------------------------------------------------------------------------
 -- Utility functions
@@ -281,49 +322,97 @@ logM logname pri msg = do
 debugM :: String                         -- ^ Logger name
       -> String                         -- ^ Log message
       -> IO ()
-debugM s = logM s DEBUG
+debugM = debugM' globalLogTree
+
+debugM' :: LogTree
+      -> String                         -- ^ Logger name
+      -> String                         -- ^ Log message
+      -> IO ()
+debugM' logTree s = logM' logTree s DEBUG
 
 {- | Log a message at 'INFO' priority -}
 infoM :: String                         -- ^ Logger name
       -> String                         -- ^ Log message
       -> IO ()
-infoM s = logM s INFO
+infoM = infoM' globalLogTree
+
+infoM' :: LogTree
+      -> String                         -- ^ Logger name
+      -> String                         -- ^ Log message
+      -> IO ()
+infoM' logTree s = logM' logTree s INFO
 
 {- | Log a message at 'NOTICE' priority -}
 noticeM :: String                         -- ^ Logger name
       -> String                         -- ^ Log message
       -> IO ()
-noticeM s = logM s NOTICE
+noticeM = noticeM' globalLogTree
+
+noticeM' :: LogTree
+      -> String                         -- ^ Logger name
+      -> String                         -- ^ Log message
+      -> IO ()
+noticeM' logTree s = logM' logTree s NOTICE
 
 {- | Log a message at 'WARNING' priority -}
 warningM :: String                         -- ^ Logger name
       -> String                         -- ^ Log message
       -> IO ()
-warningM s = logM s WARNING
+warningM = warningM' globalLogTree
+
+warningM' :: LogTree
+      -> String                         -- ^ Logger name
+      -> String                         -- ^ Log message
+      -> IO ()
+warningM' logTree s = logM' logTree s WARNING
 
 {- | Log a message at 'ERROR' priority -}
 errorM :: String                         -- ^ Logger name
       -> String                         -- ^ Log message
       -> IO ()
-errorM s = logM s ERROR
+errorM = errorM' globalLogTree
+
+errorM' :: LogTree
+      -> String                         -- ^ Logger name
+      -> String                         -- ^ Log message
+      -> IO ()
+errorM' logTree s = logM' logTree s ERROR
 
 {- | Log a message at 'CRITICAL' priority -}
 criticalM :: String                         -- ^ Logger name
       -> String                         -- ^ Log message
       -> IO ()
-criticalM s = logM s CRITICAL
+criticalM = criticalM' globalLogTree
+
+criticalM' :: LogTree
+      -> String                         -- ^ Logger name
+      -> String                         -- ^ Log message
+      -> IO ()
+criticalM' logTree s = logM' logTree s CRITICAL
 
 {- | Log a message at 'ALERT' priority -}
+alertM' :: LogTree
+      -> String                         -- ^ Logger name
+      -> String                         -- ^ Log message
+      -> IO ()
+alertM' logTree s = logM' logTree s ALERT
+
 alertM :: String                         -- ^ Logger name
       -> String                         -- ^ Log message
       -> IO ()
-alertM s = logM s ALERT
+alertM = alertM' globalLogTree
 
 {- | Log a message at 'EMERGENCY' priority -}
+emergencyM' :: LogTree
+      -> String                         -- ^ Logger name
+      -> String                         -- ^ Log message
+      -> IO ()
+emergencyM' logTree s = logM' logTree s EMERGENCY
+
 emergencyM :: String                         -- ^ Logger name
       -> String                         -- ^ Log message
       -> IO ()
-emergencyM s = logM s EMERGENCY
+emergencyM = emergencyM' globalLogTree
 
 ---------------------------------------------------------------------------
 -- Public Logger Interaction Support
@@ -333,42 +422,52 @@ emergencyM s = logM s EMERGENCY
 -- exists, creates new loggers and any necessary parent loggers, with
 -- no connected handlers.
 
-getLogger :: String -> IO Logger
-getLogger lname = modifyMVar logTree $ \lt ->
+getLogger' :: LogTree -> String -> IO Logger
+getLogger' (LogTree logTree) lname = modifyMVar logTree $ \lt ->
     case Map.lookup lname lt of
-         Just x ->  return (lt, x) -- A logger exists; return it and leave tree
+         -- A logger exists; return it and leave tree
+         Just x ->  return (lt, x)
          Nothing -> do
                     -- Add logger(s).  Then call myself to retrieve it.
                     let newlt = createLoggers (componentsOfName lname) lt
                     let result = fromJust $ Map.lookup lname newlt
                     return (newlt, result)
-    where createLoggers :: [String] -> LogTree -> LogTree
+    where createLoggers :: [String] -> Map.Map String Logger -> Map.Map String Logger
           createLoggers [] lt = lt -- No names to add; return tree unmodified
           createLoggers (x:xs) lt = -- Add logger to tree
               if Map.member x lt
                  then createLoggers xs lt
                  else createLoggers xs 
-                          (Map.insert x (defaultLogger {name=x}) lt)
+                           (Map.insert x (defaultLogger {name=x}) lt)
           defaultLogger = Logger Nothing [] undefined
+
+getLogger :: String -> IO Logger
+getLogger = getLogger' globalLogTree
 
 -- | Returns the root logger.
 
+getRootLogger' :: LogTree -> IO Logger
+getRootLogger' logTree = getLogger' logTree rootLoggerName
+
 getRootLogger :: IO Logger
-getRootLogger = getLogger rootLoggerName
+getRootLogger = getRootLogger' globalLogTree
 
 -- | Log a message, assuming the current logger's level permits it.
+logL' :: LogTree -> Logger -> Priority -> String -> IO ()
+logL' logTree l pri msg = handle' logTree l (pri, msg)
+
 logL :: Logger -> Priority -> String -> IO ()
-logL l pri msg = handle l (pri, msg)
+logL = logL' globalLogTree
 
 -- | Handle a log request.
-handle :: Logger -> LogRecord -> IO ()
-handle l (pri, msg) = 
+handle' :: LogTree -> Logger -> LogRecord -> IO ()
+handle' logTree l (pri, msg) = 
     let parentLoggers :: String -> IO [Logger]
         parentLoggers [] = return []
         parentLoggers name = 
             let pname = (head . drop 1 . reverse . componentsOfName) name
                 in 
-                do parent <- getLogger pname
+                do parent <- getLogger' logTree pname
                    next <- parentLoggers pname
                    return (parent : next)
         parentHandlers :: String -> IO [HandlerT]
@@ -433,9 +532,12 @@ clearLevel l = l {level = Nothing}
 -- | Updates the global record for the given logger to take into
 -- account any changes you may have made.
 
+saveGlobalLogger' :: LogTree -> Logger -> IO ()
+saveGlobalLogger' (LogTree logTree) l = 
+      modifyMVar_ logTree (\lt -> return $ Map.insert (name l) l lt)
+
 saveGlobalLogger :: Logger -> IO ()
-saveGlobalLogger l = modifyMVar_ logTree 
-                     (\lt -> return $ Map.insert (name l) l lt)
+saveGlobalLogger = saveGlobalLogger' globalLogTree
 
 {- | Helps you make changes on the given logger.  Takes a function
 that makes changes and writes those changes back to the global
@@ -445,20 +547,29 @@ database.  Here's an example from above (\"s\" is a 'LogHandler'):
 >                    (setLevel DEBUG . setHandlers [s])
 -}
 
+updateGlobalLogger' :: LogTree
+                      -> String            -- ^ Logger name
+                      -> (Logger -> Logger) -- ^ Function to call
+                      -> IO ()
+updateGlobalLogger' logTree ln func =
+    do l <- getLogger' logTree ln
+       saveGlobalLogger' logTree (func l)
+
 updateGlobalLogger :: String            -- ^ Logger name
                       -> (Logger -> Logger) -- ^ Function to call
                       -> IO ()
-updateGlobalLogger ln func =
-    do l <- getLogger ln
-       saveGlobalLogger (func l)
+updateGlobalLogger = updateGlobalLogger' globalLogTree
 
 -- | Allow gracefull shutdown. Release all opened files/handlers/etc.
-removeAllHandlers :: IO ()
-removeAllHandlers =
-    modifyMVar_ logTree $ \lt -> do
+removeAllHandlers' :: LogTree -> IO ()
+removeAllHandlers' (LogTree logTree) =
+    modifyMVar_ logTree $ \ lt -> do
         let allHandlers = Map.fold (\l r -> concat [r, handlers l]) [] lt
         mapM_ (\(HandlerT h) -> close h) allHandlers
         return $ Map.map (\l -> l {handlers = []}) lt
+
+removeAllHandlers :: IO ()
+removeAllHandlers = removeAllHandlers' globalLogTree
 
 {- | Traps exceptions that may occur, logging them, then passing them on.
 
@@ -466,22 +577,30 @@ Takes a logger name, priority, leading description text (you can set it to
 @\"\"@ if you don't want any), and action to run.
 -}
 
-traplogging :: String                   -- Logger name
-            -> Priority                 -- Logging priority
-            -> String                   -- Descriptive text to prepend to logged messages
-            -> IO a                     -- Action to run
-            -> IO a                     -- Return value
-traplogging logger priority desc action =
+traplogging' :: LogTree
+             -> String                   -- Logger name
+             -> Priority                 -- Logging priority
+             -> String                   -- Descriptive text to prepend to logged messages
+             -> IO a                     -- Action to run
+             -> IO a                     -- Return value
+traplogging' logTree logger priority desc action =
     let realdesc = case desc of
                              "" -> ""
                              x -> x ++ ": "
         handler :: Control.Exception.SomeException -> IO a
         handler e = do
-                    logM logger priority (realdesc ++ (show e))
+                    logM' logTree logger priority (realdesc ++ (show e))
                     Control.Exception.throw e             -- Re-raise it
         in
         Control.Exception.catch action handler
-    
+
+traplogging :: String                   -- Logger name
+            -> Priority                 -- Logging priority
+            -> String                   -- Descriptive text to prepend to logged messages
+            -> IO a                     -- Action to run
+            -> IO a                     -- Return value
+traplogging = traplogging' globalLogTree
+
 {- This function pulled in from MissingH to avoid a dep on it -}
 split :: Eq a => [a] -> [a] -> [[a]]
 split _ [] = []
