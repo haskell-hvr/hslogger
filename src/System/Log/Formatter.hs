@@ -28,7 +28,7 @@ import Control.Concurrent (myThreadId)
 import System.Posix.Process (getProcessID)
 #endif
 
-#if __GLASGOW_HASKELL__ > 708
+#if MIN_VERSION_time(1,5,0)
 import Data.Time.Format (defaultTimeLocale)
 #else
 import System.Locale (defaultTimeLocale)

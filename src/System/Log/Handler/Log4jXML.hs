@@ -110,7 +110,7 @@ import Control.Concurrent (ThreadId, myThreadId)  -- myThreadId is GHC only!
 import Control.Concurrent.MVar
 import Data.List (isPrefixOf)
 import System.IO
-#if __GLASGOW_HASKELL__ > 708
+#if MIN_VERSION_time(1,5,0)
 import Data.Time.Format (defaultTimeLocale)
 #else
 import System.Locale (defaultTimeLocale)
