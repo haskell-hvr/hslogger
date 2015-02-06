@@ -109,8 +109,10 @@ import Control.Concurrent (ThreadId, myThreadId)  -- myThreadId is GHC only!
 import Control.Concurrent.MVar
 import Data.List (isPrefixOf)
 import System.IO
-import System.Locale (defaultTimeLocale)
 import Data.Time
+#if !MIN_VERSION_time(1,5,0)
+import System.Locale (defaultTimeLocale)
+#endif
 import System.Log
 import System.Log.Handler
 import System.Log.Handler.Simple (streamHandler, GenericHandler(..))
