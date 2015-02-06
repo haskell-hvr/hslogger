@@ -28,8 +28,12 @@ import Control.Concurrent (myThreadId)
 import System.Posix.Process (getProcessID)
 #endif
 
-import System.Locale (defaultTimeLocale)
 import Data.Time (getZonedTime,getCurrentTime,formatTime)
+#if MIN_VERSION_time(1,5,0)
+import Data.Time (defaultTimeLocale)
+#else
+import System.Locale (defaultTimeLocale)
+#endif
 
 import System.Log
 
