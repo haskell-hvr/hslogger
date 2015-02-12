@@ -27,7 +27,7 @@ extra-source-files: LICENSE,
     testsrc/Tests.hs,
     testsrc/runtests.hs,
     winbuild.bat
-Cabal-Version: >= 1.2
+Cabal-Version: >= 1.6
 
 flag small_base
   description: choose the new smaller, split-up base package.
@@ -49,8 +49,8 @@ Library
         build-depends: base >= 4 && < 5, containers, directory, process,
                        time < 1.5, old-locale
     else
-        build-depends: base < 3, time < 1.5
-    GHC-Options: -O2
+        build-depends: base < 3, time
+    -- GHC-Options: -O2
     Hs-Source-Dirs: src
 
 Executable runtests
@@ -62,3 +62,8 @@ Executable runtests
     HS-Source-Dirs: testsrc, .
     Extensions: ExistentialQuantification, OverlappingInstances,
         UndecidableInstances, CPP
+
+source-repository head
+  type:     git
+  location: https://github.com/alanz/ghc-exactprint.git
+
