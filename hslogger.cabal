@@ -63,7 +63,3 @@ Executable runtests
     Extensions: ExistentialQuantification, OverlappingInstances,
         UndecidableInstances, CPP
 
-source-repository head
-  type:     git
-  location: https://github.com/alanz/ghc-exactprint.git
-
