@@ -1,5 +1,5 @@
 Name: hslogger
-Version: 1.2.7
+Version: 1.2.8
 License: BSD3
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
@@ -47,7 +47,7 @@ Library
         Build-Depends: unix
     if flag(small_base)
         build-depends: base >= 4 && < 5, containers, directory, process,
-                       time < 1.5, old-locale
+                       old-locale
     else
         build-depends: base < 3, time
     -- GHC-Options: -O2
