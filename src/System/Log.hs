@@ -44,7 +44,7 @@ data Priority =
           | CRITICAL                -- ^ Severe situations
           | ALERT                   -- ^ Take immediate action
           | EMERGENCY               -- ^ System is unusable
-                    deriving (Eq, Ord, Show, Read)
+                    deriving (Eq, Ord, Enum, Bounded, Show, Read)
 
 {- | Internal type of log records -}
 
