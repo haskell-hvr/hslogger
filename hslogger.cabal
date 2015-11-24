@@ -59,7 +59,7 @@ Executable runtests
     else
       Buildable: False
     Main-Is: runtests.hs
-    HS-Source-Dirs: testsrc, .
+    HS-Source-Dirs: testsrc, ., src
     Extensions: ExistentialQuantification, OverlappingInstances,
         UndecidableInstances, CPP
 
