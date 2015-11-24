@@ -53,7 +53,8 @@ Library
     -- GHC-Options: -O2
     Hs-Source-Dirs: src
 
-Executable runtests
+test-suite runtests
+    type: exitcode-stdio-1.0
     if flag(buildtests)
       Buildable: True
     else
@@ -62,4 +63,5 @@ Executable runtests
     HS-Source-Dirs: testsrc, .
     Extensions: ExistentialQuantification, OverlappingInstances,
         UndecidableInstances, CPP
-
+    build-depends: base
+                 , HUnit
