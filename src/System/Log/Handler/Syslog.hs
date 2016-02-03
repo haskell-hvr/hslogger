@@ -247,7 +247,7 @@ instance LogHandler SyslogHandler where
     getLevel sh = priority sh
     setFormatter sh f = sh{formatter = f}
     getFormatter sh = formatter sh
-    emit sh (_, msg) _ = do
+    emit sh (prio, msg) _ = do
       when (elem PERROR (options sh)) (hPutStrLn stderr msg)
       pidPart <- getPidPart
       void $ sendstr (toSyslogFormat msg pidPart)
@@ -261,7 +261,7 @@ instance LogHandler SyslogHandler where
           sendstr (genericDrop sent omsg)
         toSyslogFormat msg pidPart =
             "<" ++ code ++ ">" ++ identity' ++ pidPart ++ ": " ++ msg ++ "\0"
-        code = show (makeCode (facility sh) (priority sh))
+        code = show $ makeCode (facility sh) prio
         identity' = identity sh
         getPidPart = if elem PID (options sh)
                      then getPid >>= \pid -> return ("[" ++ pid ++ "]")
