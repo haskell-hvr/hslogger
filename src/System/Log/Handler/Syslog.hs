@@ -29,6 +29,7 @@ of the rest of that framework for those interested in that.
 -}
 
 module System.Log.Handler.Syslog(
+                                       SyslogHandler, -- No constructors.
                                        -- * Handler Initialization
                                        openlog,
                                        -- * Advanced handler initialization
