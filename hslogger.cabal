@@ -27,7 +27,10 @@ extra-source-files: LICENSE,
     testsrc/Tests.hs,
     testsrc/runtests.hs,
     winbuild.bat
-Cabal-Version: >= 1.6
+Cabal-Version: >= 1.8
+source-repository head
+  type: git
+  location: git@github.com:jgoerzen/hslogger.git
 
 flag small_base
   description: choose the new smaller, split-up base package.
