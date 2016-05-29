@@ -39,12 +39,12 @@ instance LogHandler GrowlHandler where
     getFormatter = formatter
 
     emit gh lr _ = let pkt = buildNotification gh nmGeneralMsg lr
-		   in mapM_ (sendNote (skt gh) pkt) (targets gh)
+                   in  mapM_ (sendNote (skt gh) pkt) (targets gh)
 
     close gh = let pkt = buildNotification gh nmClosingMsg
-			 (WARNING, "Connection closing.")
+                             (WARNING, "Connection closing.")
                    s   = skt gh
-	       in mapM_ (sendNote s pkt) (targets gh) >> sClose s
+               in  mapM_ (sendNote s pkt) (targets gh) >> sClose s
 
 sendNote :: Socket -> String -> HostAddress -> IO Int
 sendNote s pkt ha = sendTo s pkt (SockAddrInet 9887 ha)
@@ -94,7 +94,7 @@ buildRegistration s = concat fields
                      foldl packIt [] appNotes,
                      ['\x0' .. (chr (length appNotes - 1))] ]
           packIt a b = a ++ (emitLen16 b) ++ b
-	  appNotes = [ nmGeneralMsg, nmClosingMsg ]
+          appNotes = [ nmGeneralMsg, nmClosingMsg ]
           emitLen8 v = [chr $ length v]
 
 {- | Adds a remote machine's address to the list of targets that will
@@ -125,9 +125,9 @@ toFlags EMERGENCY = 5   -- Same as ALERT, but "sticky" bit set
 -- Creates a network packet containing a notification record.
 
 buildNotification :: GrowlHandler
-		  -> String
+                  -> String
                   -> LogRecord
-		  -> String
+                  -> String
 buildNotification gh nm (p, msg) = concat fields
     where fields = [ ['\x1', '\x5'],
                      emit16 (toFlags p),
