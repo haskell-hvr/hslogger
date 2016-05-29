@@ -198,7 +198,7 @@ import Data.List(map, isPrefixOf)
 import Data.Maybe
 import qualified Data.Map as Map
 import qualified Control.Exception
-import Control.Monad.Except
+import Control.Monad.Error
 ---------------------------------------------------------------------------
 -- Basic logger types
 ---------------------------------------------------------------------------
