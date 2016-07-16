@@ -472,7 +472,7 @@ updateGlobalLogger ln func =
     do l <- getLogger ln
        saveGlobalLogger (func l)
 
--- | Allow gracefull shutdown. Release all opened files/handlers/etc.
+-- | Allow graceful shutdown. Release all opened files/handlers/etc.
 removeAllHandlers :: IO ()
 removeAllHandlers =
     modifyMVar_ logTree $ \lt -> do
