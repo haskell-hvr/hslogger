@@ -1,3 +1,4 @@
+{-# Language DeriveDataTypeable #-}
 {- |
    Module     : System.Log
    Copyright  : Copyright (C) 2004-2011 John Goerzen
@@ -44,7 +45,7 @@ data Priority =
           | CRITICAL                -- ^ Severe situations
           | ALERT                   -- ^ Take immediate action
           | EMERGENCY               -- ^ System is unusable
-                    deriving (Eq, Ord, Enum, Bounded, Show, Read)
+                    deriving (Eq, Ord, Enum, Bounded, Show, Read, Data, Typeable)
 
 {- | Internal type of log records -}
 
