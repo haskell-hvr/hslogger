@@ -3,7 +3,7 @@
    Copyright  : Copyright (C) 2004-2011 John Goerzen
    License    : BSD3
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: portable
 
@@ -17,16 +17,14 @@ module System.Log.Handler.Simple(streamHandler, fileHandler,
                                       verboseStreamHandler)
     where
 
-#if !MIN_VERSION_base(4,6,0)
-import Prelude hiding (catch)
-#endif
-import Control.Exception (SomeException, catch)
+import Control.Exception (SomeException, tryJust)
 import Data.Char (ord)
 
 import System.Log
 import System.Log.Handler
 import System.Log.Formatter
 import System.IO
+import System.IO.Error
 import Control.Concurrent.MVar
 
 {- | A helper data type. -}
@@ -64,9 +62,12 @@ streamHandler h pri =
                                writeFunc = mywritefunc,
                                closeFunc = \x -> return ()})
     where
-      writeToHandle hdl msg =
-          hPutStrLn hdl msg `catch` (handleWriteException hdl msg)
-      handleWriteException :: Handle -> String -> SomeException -> IO ()
+      writeToHandle hdl msg = do
+          rv <- tryJust myException (hPutStrLn hdl msg)
+          either (handleWriteException hdl msg) return rv
+      myException e
+          | isDoesNotExistError e = Just e
+          | otherwise = Nothing
       handleWriteException hdl msg e =
           let msg' = "Error writing log message: " ++ show e ++
                      " (original message: " ++ msg ++ ")"
