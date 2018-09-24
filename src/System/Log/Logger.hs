@@ -476,7 +476,7 @@ updateGlobalLogger ln func =
 removeAllHandlers :: IO ()
 removeAllHandlers =
     modifyMVar_ logTree $ \lt -> do
-        let allHandlers = Map.fold (\l r -> concat [r, handlers l]) [] lt
+        let allHandlers = Map.foldr (\l r -> concat [r, handlers l]) [] lt
         mapM_ (\(HandlerT h) -> close h) allHandlers
         return $ Map.map (\l -> l {handlers = []}) lt
 
