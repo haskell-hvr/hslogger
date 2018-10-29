@@ -44,6 +44,7 @@ module System.Log.Handler.Syslog(
                                        ) where
 
 import qualified Control.Exception as E
+import qualified Data.ByteString.Char8 as BC
 import System.Log
 import System.Log.Formatter
 import System.Log.Handler
@@ -249,7 +250,7 @@ instance LogHandler SyslogHandler where
     setFormatter sh f = sh{formatter = f}
     getFormatter sh = formatter sh
     emit sh (prio, msg) _ = do
-      when (elem PERROR (options sh)) (hPutStrLn stderr msg)
+      when (elem PERROR (options sh)) (BC.hPutStrLn stderr $ BC.pack msg)
       pidPart <- getPidPart
       void $ sendstr (toSyslogFormat msg pidPart)
       where
