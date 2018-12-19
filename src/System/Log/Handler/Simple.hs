@@ -16,6 +16,7 @@ module System.Log.Handler.Simple(streamHandler, fileHandler,
     where
 
 import Control.Exception (tryJust)
+import Control.DeepSeq
 import Data.Char (ord)
 
 import System.Log
@@ -51,6 +52,7 @@ streamHandler :: Handle -> Priority -> IO (GenericHandler Handle)
 streamHandler h pri =
     do lock <- newMVar ()
        let mywritefunc hdl msg =
+               msg `deepseq`
                withMVar lock (\_ -> do writeToHandle hdl msg
                                        hFlush hdl
                              )
