@@ -1,10 +1,12 @@
+Cabal-Version: >= 1.8
 Name: hslogger
-Version: 1.2.11
+Version: 1.2.12
+
 License: BSD3
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
 Stability: Stable
-Copyright: Copyright (c) 2004-2012 John Goerzen
+Copyright: Copyright (c) 2004-2018 John Goerzen
 license-file: LICENSE
 build-type: Simple
 Homepage: http://software.complete.org/hslogger
@@ -27,16 +29,17 @@ extra-source-files: LICENSE,
     testsrc/Tests.hs,
     testsrc/runtests.hs,
     winbuild.bat
-Cabal-Version: >= 1.8
 source-repository head
   type: git
   location: git@github.com:jgoerzen/hslogger.git
 
 flag small_base
   description: choose the new smaller, split-up base package.
+
 flag buildtests
   description: Build the executable to run unit tests
   default: False
+  manual: True
 
 Library
     Exposed-Modules:
@@ -45,15 +48,24 @@ Library
         System.Log.Handler.Growl, System.Log.Handler.Log4jXML,
         System.Log.Logger
     Extensions: CPP, ExistentialQuantification
-    Build-Depends: network, mtl
+
+    Build-Depends: network < 2.9
+                 , mtl < 2.3
+
     if !os(windows)
-        Build-Depends: unix
+        Build-Depends: unix < 2.8
+
     if flag(small_base)
-        build-depends: base >= 4 && < 5, containers, directory, process,
-                       time, old-locale
+        build-depends: base >= 4 && < 4.13
+                     , containers >= 0.4.2.1 && < 0.7
+                     , directory < 1.4
+                     , process < 1.7
+                     , time < 1.10
+                     , old-locale < 1.1
     else
-        build-depends: base < 3, time
-    -- GHC-Options: -O2
+        build-depends: base < 3
+                     , time
+
     Hs-Source-Dirs: src
 
 test-suite runtests
