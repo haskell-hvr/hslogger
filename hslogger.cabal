@@ -1,24 +1,26 @@
-Cabal-Version: >= 1.8
+Cabal-Version: >=1.10
 Name: hslogger
 Version: 1.2.12
 
-License: BSD3
-Maintainer: John Goerzen <jgoerzen@complete.org>
+Maintainer: hvr@gnu.org
 Author: John Goerzen
-Stability: Stable
 Copyright: Copyright (c) 2004-2018 John Goerzen
+License: BSD3
 license-file: LICENSE
 build-type: Simple
 Homepage: http://software.complete.org/hslogger
-Synopsis: Versatile logging framework
-Description:  hslogger is a logging framework for Haskell, roughly similar to
- Python's logging module.
- .
- hslogger lets each log message have a priority and source be associated
- with it.  The programmer can then define global handlers that route
- or filter messages based on the priority and source.  hslogger also
- has a syslog handler built in.
+Bug-Reports: https://github.com/hvr/hslogger/issues
 Category: Interfaces
+Synopsis: Versatile logging framework
+Description:
+ @hslogger@ is a logging framework for Haskell, roughly similar
+ to [Python's logging module](https://docs.python.org/2/library/logging.html).
+ .
+ @hslogger@ lets each log message have a priority and source be associated
+ with it.  The programmer can then define global handlers that route
+ or filter messages based on the priority and source.  @hslogger@ also
+ has a [Syslog](https://tools.ietf.org/html/rfc5424) handler built in.
+
 extra-source-files: LICENSE,
     contrib/java/build.xml,
     contrib/java/hslogger4j.jar,
@@ -29,9 +31,10 @@ extra-source-files: LICENSE,
     testsrc/Tests.hs,
     testsrc/runtests.hs,
     winbuild.bat
+
 source-repository head
   type: git
-  location: git@github.com:jgoerzen/hslogger.git
+  location: http://github.com/hvr/hslogger.git
 
 flag small_base
   description: choose the new smaller, split-up base package.
@@ -47,7 +50,9 @@ Library
         System.Log.Handler.Simple, System.Log.Handler.Syslog,
         System.Log.Handler.Growl, System.Log.Handler.Log4jXML,
         System.Log.Logger
-    Extensions: CPP, ExistentialQuantification
+
+    Default-Language: Haskell2010
+    Default-Extensions: CPP ExistentialQuantification
 
     Build-Depends: network < 2.9
                  , mtl < 2.3
@@ -76,7 +81,11 @@ test-suite runtests
       Buildable: False
     Main-Is: runtests.hs
     HS-Source-Dirs: testsrc, ., src
-    Extensions: ExistentialQuantification, OverlappingInstances,
-        UndecidableInstances, CPP
+    Default-Language: Haskell2010
+    Default-Extensions:
+        ExistentialQuantification
+        OverlappingInstances
+        UndecidableInstances
+        CPP
     build-depends: base
                  , HUnit
