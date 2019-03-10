@@ -48,14 +48,23 @@ import System.Log
 import System.Log.Formatter
 import System.Log.Handler
 import Data.Bits
-import Network.Socket as S
-import Network.BSD
-import Data.List
+import qualified Network.Socket as S
+import qualified Network.Socket.ByteString as SBS
+import qualified Network.BSD as S
+import Data.List (genericDrop)
 #ifndef mingw32_HOST_OS
 import System.Posix.Process(getProcessID)
 #endif
 import System.IO
 import Control.Monad (void, when)
+
+import UTF8
+
+send :: S.Socket -> String -> IO Int
+send s = SBS.send s . toUTF8BS
+
+sendTo :: S.Socket -> String -> S.SockAddr -> IO Int
+sendTo s str = SBS.sendTo s (toUTF8BS str)
 
 code_of_pri :: Priority -> Int
 code_of_pri p = case p of
@@ -132,9 +141,9 @@ data Option = PID                       -- ^ Automatically log process ID (PID) 
 data SyslogHandler = SyslogHandler {options :: [Option],
                                     facility :: Facility,
                                     identity :: String,
-                                    logsocket :: Socket,
-                                    address :: SockAddr,
-                                    sock_type :: SocketType,
+                                    logsocket :: S.Socket,
+                                    address :: S.SockAddr,
+                                    sock_type :: S.SocketType,
                                     priority :: Priority,
                                     formatter :: LogFormatter SyslogHandler
                                    }
@@ -181,29 +190,29 @@ openlog_local fifopath ident options fac pri =
                     -- does roughly the similar thing:
                     --     http://www.gnu.org/software/libc/manual/html_node/openlog.html
 
-                    s <- socket AF_UNIX Stream 0
+                    s <- S.socket S.AF_UNIX S.Stream 0
                     tryStream s `E.catch` (onIOException (fallbackToDgram s))
-       openlog_generic s (SockAddrUnix fifopath) t ident options fac pri
+       openlog_generic s (S.SockAddrUnix fifopath) t ident options fac pri
 
   where onIOException :: IO a -> E.IOException -> IO a
         onIOException a _ = a
 
-        tryStream :: Socket -> IO (Socket, SocketType)
+        tryStream :: S.Socket -> IO (S.Socket, S.SocketType)
         tryStream s =
-            do connect s (SockAddrUnix fifopath)
-               return (s, Stream)
+            do S.connect s (S.SockAddrUnix fifopath)
+               return (s, S.Stream)
 
-        fallbackToDgram :: Socket -> IO (Socket, SocketType)
+        fallbackToDgram :: S.Socket -> IO (S.Socket, S.SocketType)
         fallbackToDgram s =
-            do S.sClose s -- close Stream variant
-               d <- socket AF_UNIX Datagram 0
-               return (d, Datagram)
+            do S.close s -- close Stream variant
+               d <- S.socket S.AF_UNIX S.Datagram 0
+               return (d, S.Datagram)
 #endif
 
 {- | Log to a remote server via UDP. -}
-openlog_remote :: Family                -- ^ Usually AF_INET or AF_INET6; see Network.Socket
-               -> HostName              -- ^ Remote hostname.  Some use @localhost@
-               -> PortNumber            -- ^ 514 is the default for syslog
+openlog_remote :: S.Family              -- ^ Usually AF_INET or AF_INET6; see Network.Socket
+               -> S.HostName            -- ^ Remote hostname.  Some use @localhost@
+               -> S.PortNumber          -- ^ 514 is the default for syslog
                -> String                -- ^ Program name
                -> [Option]              -- ^ 'Option's
                -> Facility              -- ^ Facility value
@@ -211,16 +220,16 @@ openlog_remote :: Family                -- ^ Usually AF_INET or AF_INET6; see Ne
                -> IO SyslogHandler
 openlog_remote fam hostname port ident options fac pri =
     do
-    he <- getHostByName hostname
-    s <- socket fam Datagram 0
-    let addr = SockAddrInet port (head (hostAddresses he))
-    openlog_generic s addr Datagram ident options fac pri
+    he <- S.getHostByName hostname
+    s <- S.socket fam S.Datagram 0
+    let addr = S.SockAddrInet port (head (S.hostAddresses he))
+    openlog_generic s addr S.Datagram ident options fac pri
 
 {- | The most powerful initialization mechanism.  Takes an open datagram
 socket. -}
-openlog_generic :: Socket               -- ^ A datagram socket
-                -> SockAddr             -- ^ Address for transmissions
-                -> SocketType           -- ^ socket connection mode (stream / datagram)
+openlog_generic :: S.Socket             -- ^ A datagram socket
+                -> S.SockAddr           -- ^ Address for transmissions
+                -> S.SocketType         -- ^ socket connection mode (stream / datagram)
                 -> String               -- ^ Program name
                 -> [Option]             -- ^ 'Option's
                 -> Facility             -- ^ Facility value
@@ -257,8 +266,8 @@ instance LogHandler SyslogHandler where
         sendstr [] = return []
         sendstr omsg = do
           sent <- case sock_type sh of
-                    Datagram -> sendTo (logsocket sh) omsg (address sh)
-                    Stream   -> send   (logsocket sh) omsg
+                    S.Datagram -> sendTo (logsocket sh) omsg (address sh)
+                    S.Stream   -> send   (logsocket sh) omsg
           sendstr (genericDrop sent omsg)
         toSyslogFormat msg pidPart =
             "<" ++ code ++ ">" ++ identity' ++ pidPart ++ ": " ++ msg ++ "\0"
@@ -275,4 +284,4 @@ instance LogHandler SyslogHandler where
           return "windows"
 #endif
 
-    close sh = sClose (logsocket sh)
+    close sh = S.close (logsocket sh)

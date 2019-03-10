@@ -198,7 +198,7 @@ import Data.List(map, isPrefixOf)
 import Data.Maybe
 import qualified Data.Map as Map
 import qualified Control.Exception
-import Control.Monad.Error
+
 ---------------------------------------------------------------------------
 -- Basic logger types
 ---------------------------------------------------------------------------
@@ -476,9 +476,16 @@ updateGlobalLogger ln func =
 removeAllHandlers :: IO ()
 removeAllHandlers =
     modifyMVar_ logTree $ \lt -> do
-        let allHandlers = Map.foldr (\l r -> concat [r, handlers l]) [] lt
+        let allHandlers = mapFoldr (\l r -> concat [r, handlers l]) [] lt
         mapM_ (\(HandlerT h) -> close h) allHandlers
         return $ Map.map (\l -> l {handlers = []}) lt
+
+mapFoldr :: (a -> b -> b) -> b -> Map.Map k a -> b
+#if MIN_VERSION_containers(0,4,2)
+mapFoldr = Map.foldr
+#else
+mapFoldr f z = foldr f z . Map.elems
+#endif
 
 {- | Traps exceptions that may occur, logging them, then passing them on.
 

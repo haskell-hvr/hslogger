@@ -1,6 +1,6 @@
 Cabal-Version: >=1.10
 Name: hslogger
-Version: 1.2.12
+Version: 1.2.13
 
 Maintainer: hvr@gnu.org
 Author: John Goerzen
@@ -21,7 +21,9 @@ Description:
  or filter messages based on the priority and source.  @hslogger@ also
  has a [Syslog](https://tools.ietf.org/html/rfc5424) handler built in.
 
-extra-source-files: LICENSE,
+extra-source-files:
+    LICENSE,
+    CHANGELOG,
     contrib/java/build.xml,
     contrib/java/hslogger4j.jar,
     contrib/java/hslogger4j-plugins.xml,
@@ -32,17 +34,17 @@ extra-source-files: LICENSE,
     testsrc/runtests.hs,
     winbuild.bat
 
+tested-with:
+  GHC ==7.0.4 || ==7.2.2 || ==7.4.2 || ==7.6.3 || ==7.8.4 || ==7.10.3 || ==8.0.2 || ==8.2.2 || ==8.4.4 || ==8.6.4
+
 source-repository head
   type: git
   location: http://github.com/hvr/hslogger.git
 
-flag small_base
-  description: choose the new smaller, split-up base package.
-
-flag buildtests
-  description: Build the executable to run unit tests
-  default: False
-  manual: True
+flag network-bsd
+  description: Use network-bsd
+  default: True
+  manual: False
 
 Library
     Exposed-Modules:
@@ -54,31 +56,30 @@ Library
     Default-Language: Haskell2010
     Default-Extensions: CPP ExistentialQuantification
 
-    Build-Depends: network < 2.9
-                 , mtl < 2.3
+    Other-Modules: UTF8
 
+    build-depends:
+        base       >= 4.3 && < 4.13
+      , bytestring >= 0.9 && < 0.11
+      , containers >= 0.4 && < 0.7
+      , directory  >= 1.1 && < 1.4
+      , process    >= 1.1 && < 1.7
+      , time       >= 1.2 && < 1.10
+      , old-locale >= 1.0 && < 1.1
+
+    if flag(network-bsd)
+      build-depends: network-bsd >= 2.8 && <2.9,
+                     network >= 2.8 && <3.1
+    else
+      build-depends: network >= 2.6 && <2.8
+ 
     if !os(windows)
         Build-Depends: unix < 2.8
-
-    if flag(small_base)
-        build-depends: base >= 4 && < 4.13
-                     , containers >= 0.4.2.1 && < 0.7
-                     , directory < 1.4
-                     , process < 1.7
-                     , time < 1.10
-                     , old-locale < 1.1
-    else
-        build-depends: base < 3
-                     , time
 
     Hs-Source-Dirs: src
 
 test-suite runtests
     type: exitcode-stdio-1.0
-    if flag(buildtests)
-      Buildable: True
-    else
-      Buildable: False
     Main-Is: runtests.hs
     HS-Source-Dirs: testsrc, ., src
     Default-Language: Haskell2010

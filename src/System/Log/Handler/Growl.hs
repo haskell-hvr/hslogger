@@ -17,17 +17,23 @@ module System.Log.Handler.Growl(addTarget, growlHandler)
 
 import Data.Char
 import Data.Word
-import Network.Socket
-import Network.BSD
+import qualified Network.Socket as S
+import qualified Network.Socket.ByteString as SBS
+import qualified Network.BSD as S
 import System.Log
 import System.Log.Handler
 import System.Log.Formatter
 
+import UTF8
+
+sendTo :: S.Socket -> String -> S.SockAddr -> IO Int
+sendTo s str = SBS.sendTo s (toUTF8BS str)
+
 data GrowlHandler = GrowlHandler { priority :: Priority,
                                    formatter :: LogFormatter GrowlHandler,
                                    appName :: String,
-                                   skt :: Socket,
-                                   targets :: [HostAddress] }
+                                   skt :: S.Socket,
+                                   targets :: [S.HostAddress] }
 
 instance LogHandler GrowlHandler where
 
@@ -44,10 +50,10 @@ instance LogHandler GrowlHandler where
     close gh = let pkt = buildNotification gh nmClosingMsg
                              (WARNING, "Connection closing.")
                    s   = skt gh
-               in  mapM_ (sendNote s pkt) (targets gh) >> sClose s
+               in  mapM_ (sendNote s pkt) (targets gh) >> S.close s
 
-sendNote :: Socket -> String -> HostAddress -> IO Int
-sendNote s pkt ha = sendTo s pkt (SockAddrInet 9887 ha)
+sendNote :: S.Socket -> String -> S.HostAddress -> IO Int
+sendNote s pkt ha = sendTo s pkt (S.SockAddrInet 9887 ha)
 
 -- Right now there are two "notification names": "message" and
 -- "disconnecting". All log messages are sent using the "message"
@@ -67,7 +73,7 @@ growlHandler :: String          -- ^ The name of the service
              -> Priority        -- ^ Priority of handler
              -> IO GrowlHandler
 growlHandler nm pri =
-    do { s <- socket AF_INET Datagram 0
+    do { s <- S.socket S.AF_INET S.Datagram 0
        ; return GrowlHandler { priority = pri, appName = nm, formatter=nullFormatter,
                                skt = s, targets = [] }
        }
@@ -102,10 +108,10 @@ buildRegistration s = concat fields
      packet to the machine. This function will throw an exception if
      the host name cannot be found. -}
 
-addTarget :: HostName -> GrowlHandler -> IO GrowlHandler
-addTarget hn gh = do { he <- getHostByName hn
-                     ; let ha = hostAddress he
-                           sa = SockAddrInet 9887 ha
+addTarget :: S.HostName -> GrowlHandler -> IO GrowlHandler
+addTarget hn gh = do { he <- S.getHostByName hn
+                     ; let ha = S.hostAddress he
+                           sa = S.SockAddrInet 9887 ha
                        in do { sendTo (skt gh) (buildRegistration gh) sa
                              ; return gh { targets = ha:(targets gh) } } }
 
