@@ -15,7 +15,7 @@ module System.Log.Handler.Simple(streamHandler, fileHandler,
                                       verboseStreamHandler)
     where
 
-import Control.Exception (SomeException, tryJust)
+import Control.Exception (tryJust)
 import Data.Char (ord)
 
 import System.Log
@@ -58,7 +58,7 @@ streamHandler h pri =
                                formatter = nullFormatter,
                                privData = h,
                                writeFunc = mywritefunc,
-                               closeFunc = \x -> return ()})
+                               closeFunc = \_ -> return ()})
     where
       writeToHandle hdl msg = do
           rv <- tryJust myException (hPutStrLn hdl msg)

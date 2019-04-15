@@ -12,8 +12,8 @@ Written by Bjorn Buckwalter, bjorn.buckwalter\@gmail.com
 -}
 
 
-module System.Log.Handler.Log4jXML ( 
-    
+module System.Log.Handler.Log4jXML (
+
     -- * Introduction
 
     {- | This module provides handlers for hslogger that are
@@ -33,10 +33,10 @@ module System.Log.Handler.Log4jXML (
     'System.Log.Handler.Simple.FileHandler' in "System.Log.Handler.Simple".
     The following handlers are provided: -}
 
-    -- ** Handlers with hslogger levels 
+    -- ** Handlers with hslogger levels
     log4jStreamHandler,
     log4jFileHandler,
-    
+
     -- ** Handlers with log4j levels
     log4jStreamHandler',
     log4jFileHandler'
@@ -104,8 +104,7 @@ module System.Log.Handler.Log4jXML (
 
     ) where
 
-import Control.Concurrent (ThreadId, myThreadId)  -- myThreadId is GHC only!
-import Control.Concurrent.MVar
+import Control.Concurrent (myThreadId)  -- myThreadId is GHC only!
 import Data.List (isPrefixOf)
 import System.IO
 #if MIN_VERSION_time(1,5,0)
@@ -220,4 +219,3 @@ replace :: Eq a => [a] -> [a] -> [a] -> [a]
 replace _    _  [       ] = []
 replace from to xs@(a:as) = if isPrefixOf from xs
     then to ++ drop (length from) xs else a : replace from to as
-

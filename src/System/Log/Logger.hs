@@ -22,7 +22,7 @@ name, and they are arranged hierarchically.  Periods serve as separators.
 Therefore, a 'Logger' named \"foo\" is the parent of loggers \"foo.printing\",
 \"foo.html\", and \"foo.io\".  These names can be anything you want.  They're
 used to indicate the area of an application or library in which a logged
-message originates.  Later you will see how you can use this concept to 
+message originates.  Later you will see how you can use this concept to
 fine-tune logging behaviors based on specific application areas.
 
 You can also tune logging behaviors based upon how important a message is.
@@ -31,7 +31,7 @@ importance levels are given by the 'Priority' type.  I've also provided
 some convenient functions that correspond to these importance levels:
 'debugM' through 'emergencyM' log messages with the specified importance.
 
-Now, an importance level (or 'Priority') 
+Now, an importance level (or 'Priority')
 is associated not just with a particular message but also
 with a 'Logger'.  If the 'Priority' of a given log message is lower than
 the 'Priority' configured in the 'Logger', that message is ignored.  This
@@ -78,7 +78,7 @@ there will be called for every message.  You can use 'getRootLogger' to get
 it or 'rootLoggerName' to work with it by name.
 
 The formatting of log messages may be customized by setting a 'LogFormatter'
-on the desired 'LogHandler'.  There are a number of simple formatters defined 
+on the desired 'LogHandler'.  There are a number of simple formatters defined
 in "System.Log.Formatter", which may be used directly, or extend to create
 your own formatter.
 
@@ -89,27 +89,27 @@ Here's an example to illustrate some of these concepts:
 > import System.Log.Handler.Simple
 > import System.Log.Handler (setFormatter)
 > import System.Log.Formatter
-> 
+>
 > -- By default, all messages of level WARNING and above are sent to stderr.
 > -- Everything else is ignored.
-> 
+>
 > -- "MyApp.Component" is an arbitrary string; you can tune
 > -- logging behavior based on it later.
 > main = do
 >        debugM "MyApp.Component"  "This is a debug message -- never to be seen"
 >        warningM "MyApp.Component2" "Something Bad is about to happen."
-> 
+>
 >        -- Copy everything to syslog from here on out.
 >        s <- openlog "SyslogStuff" [PID] USER DEBUG
 >        updateGlobalLogger rootLoggerName (addHandler s)
->       
+>
 >        errorM "MyApp.Component" "This is going to stderr and syslog."
 >
 >        -- Now we'd like to see everything from BuggyComponent
 >        -- at DEBUG or higher go to syslog and stderr.
 >        -- Also, we'd like to still ignore things less than
 >        -- WARNING in other areas.
->        -- 
+>        --
 >        -- So, we adjust the Logger for MyApp.BuggyComponent.
 >
 >        updateGlobalLogger "MyApp.BuggyComponent"
@@ -117,10 +117,10 @@ Here's an example to illustrate some of these concepts:
 >
 >        -- This message will go to syslog and stderr
 >        debugM "MyApp.BuggyComponent" "This buggy component is buggy"
-> 
+>
 >        -- This message will go to syslog and stderr too.
 >        warningM "MyApp.BuggyComponent" "Still Buggy"
-> 
+>
 >        -- This message goes nowhere.
 >        debugM "MyApp.WorkingComponent" "Hello"
 >
@@ -131,8 +131,8 @@ Here's an example to illustrate some of these concepts:
 >        h <- fileHandler "debug.log" DEBUG >>= \lh -> return $
 >                 setFormatter lh (simpleLogFormatter "[$time : $loggername : $prio] $msg")
 >        updateGlobalLogger "MyApp.BuggyComponent" (addHandler h)
->       
->        -- This message will go to syslog and stderr, 
+>
+>        -- This message will go to syslog and stderr,
 >        -- and to the file "debug.log" with a format like :
 >        -- [2010-05-23 16:47:28 : MyApp.BuggyComponent : DEBUG] Some useful diagnostics...
 >        debugM "MyApp.BuggyComponent" "Some useful diagnostics..."
@@ -188,7 +188,7 @@ logger hierarchy. -}
                                ) where
 import System.Log
 import System.Log.Handler(LogHandler, close)
-import System.Log.Formatter(LogFormatter)
+import System.Log.Formatter(LogFormatter) -- for Haddock
 import qualified System.Log.Handler(handle)
 import System.Log.Handler.Simple
 import System.IO
@@ -227,36 +227,36 @@ rootLoggerName = ""
 -- Logger Tree Storage
 ---------------------------------------------------------------------------
 
--- | The log tree.  Initialize it with a default root logger 
+-- | The log tree.  Initialize it with a default root logger
 -- and (FIXME) a logger for MissingH itself.
 
 {-# NOINLINE logTree #-}
 
 logTree :: MVar LogTree
 -- note: only kick up tree if handled locally
-logTree = 
+logTree =
     unsafePerformIO $ do
                       h <- streamHandler stderr DEBUG
-                      newMVar (Map.singleton rootLoggerName (Logger 
+                      newMVar (Map.singleton rootLoggerName (Logger
                                                    {level = Just WARNING,
                                                     name = "",
                                                     handlers = [HandlerT h]}))
 
 {- | Given a name, return all components of it, starting from the root.
-Example return value: 
+Example return value:
 
 >["", "MissingH", "System.Cmd.Utils", "System.Cmd.Utils.pOpen"]
 
 -}
 componentsOfName :: String -> [String]
-componentsOfName name =
+componentsOfName name' =
     let joinComp [] _ = []
         joinComp (x:xs) [] = x : joinComp xs x
         joinComp (x:xs) accum =
             let newlevel = accum ++ "." ++ x in
                 newlevel : joinComp xs newlevel
         in
-        rootLoggerName : joinComp (split "." name) []
+        rootLoggerName : joinComp (split "." name') []
 
 ---------------------------------------------------------------------------
 -- Logging With Location
@@ -347,7 +347,7 @@ getLogger lname = modifyMVar logTree $ \lt ->
           createLoggers (x:xs) lt = -- Add logger to tree
               if Map.member x lt
                  then createLoggers xs lt
-                 else createLoggers xs 
+                 else createLoggers xs
                           (Map.insert x (defaultLogger {name=x}) lt)
           defaultLogger = Logger Nothing [] undefined
 
@@ -362,31 +362,31 @@ logL l pri msg = handle l (pri, msg)
 
 -- | Handle a log request.
 handle :: Logger -> LogRecord -> IO ()
-handle l (pri, msg) = 
+handle l (pri, msg) =
     let parentLoggers :: String -> IO [Logger]
         parentLoggers [] = return []
-        parentLoggers name = 
-            let pname = (head . drop 1 . reverse . componentsOfName) name
-                in 
+        parentLoggers name' =
+            let pname = (head . drop 1 . reverse . componentsOfName) name'
+                in
                 do parent <- getLogger pname
                    next <- parentLoggers pname
                    return (parent : next)
         parentHandlers :: String -> IO [HandlerT]
-        parentHandlers name = parentLoggers name >>= (return . concatMap handlers)
+        parentHandlers name' = parentLoggers name' >>= (return . concatMap handlers)
 
         -- Get the priority we should use.  Find the first logger in the tree,
         -- starting here, with a set priority.  If even root doesn't have one,
         -- assume DEBUG.
         getLoggerPriority :: String -> IO Priority
-        getLoggerPriority name =
-            do pl <- parentLoggers name
+        getLoggerPriority name' =
+            do pl <- parentLoggers name'
                case catMaybes . map level $ (l : pl) of
                  [] -> return DEBUG
                  (x:_) -> return x
         in
         do lp <- getLoggerPriority (name l)
            if pri >= lp
-              then do 
+              then do
                 ph <- parentHandlers (name l)
                 sequence_ (handlerActions (ph ++ (handlers l)) (pri, msg)
                                           (name l))
@@ -429,7 +429,7 @@ removeHandler l =
 -- | Set the 'Logger'\'s list of handlers to the list supplied.
 -- All existing handlers are removed first.
 setHandlers :: LogHandler a => [a] -> Logger -> Logger
-setHandlers hl l = 
+setHandlers hl l =
     l{handlers = map (\h -> HandlerT h) hl}
 
 -- | Returns the "level" of the logger.  Items beneath this
@@ -454,7 +454,7 @@ clearLevel l = l {level = Nothing}
 -- account any changes you may have made.
 
 saveGlobalLogger :: Logger -> IO ()
-saveGlobalLogger l = modifyMVar_ logTree 
+saveGlobalLogger l = modifyMVar_ logTree
                      (\lt -> return $ Map.insert (name l) l lt)
 
 {- | Helps you make changes on the given logger.  Takes a function
@@ -498,13 +498,13 @@ traplogging :: String                   -- Logger name
             -> String                   -- Descriptive text to prepend to logged messages
             -> IO a                     -- Action to run
             -> IO a                     -- Return value
-traplogging logger priority desc action =
+traplogging logger priority' desc action =
     let realdesc = case desc of
                              "" -> ""
                              x -> x ++ ": "
         handler :: Control.Exception.SomeException -> IO a
         handler e = do
-                    logM logger priority (realdesc ++ (show e))
+                    logM logger priority' (realdesc ++ (show e))
                     Control.Exception.throw e             -- Re-raise it
         in
         Control.Exception.catch action handler
@@ -535,4 +535,3 @@ spanList func list@(x:xs) =
        then (x:ys,zs)
        else ([],list)
     where (ys,zs) = spanList func xs
-

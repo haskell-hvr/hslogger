@@ -78,7 +78,7 @@ code_of_pri p = case p of
 {- | Facilities are used by the system to determine where messages
 are sent. -}
 
-data Facility = 
+data Facility =
               KERN                      -- ^ Kernel messages; you should likely never use this in your programs
               | USER                    -- ^ General userland messages.  Use this if nothing else is appropriate
               | MAIL                    -- ^ E-Mail system
@@ -181,7 +181,7 @@ openlog_local :: String                 -- ^ Path to FIFO
               -> Facility               -- ^ Facility value
               -> Priority               -- ^ Priority limit
               -> IO SyslogHandler
-openlog_local fifopath ident options fac pri =
+openlog_local fifopath ident options' fac pri =
     do (s, t) <- do -- "/dev/log" is usually Datagram,
                     -- but most of syslog loggers allow it to be
                     -- of Stream type. glibc's" openlog()"
@@ -190,7 +190,7 @@ openlog_local fifopath ident options fac pri =
 
                     s <- S.socket S.AF_UNIX S.Stream 0
                     tryStream s `E.catch` (onIOException (fallbackToDgram s))
-       openlog_generic s (S.SockAddrUnix fifopath) t ident options fac pri
+       openlog_generic s (S.SockAddrUnix fifopath) t ident options' fac pri
 
   where onIOException :: IO a -> E.IOException -> IO a
         onIOException a _ = a
@@ -216,12 +216,12 @@ openlog_remote :: S.Family              -- ^ Usually AF_INET or AF_INET6; see Ne
                -> Facility              -- ^ Facility value
                -> Priority              -- ^ Priority limit
                -> IO SyslogHandler
-openlog_remote fam hostname port ident options fac pri =
+openlog_remote fam hostname port ident options' fac pri =
     do
     he <- S.getHostByName hostname
     s <- S.socket fam S.Datagram 0
     let addr = S.SockAddrInet port (head (S.hostAddresses he))
-    openlog_generic s addr S.Datagram ident options fac pri
+    openlog_generic s addr S.Datagram ident options' fac pri
 
 {- | The most powerful initialization mechanism.  Takes an open datagram
 socket. -}
@@ -267,8 +267,8 @@ instance LogHandler SyslogHandler where
                     S.Datagram -> sendTo (logsocket sh) omsg (address sh)
                     S.Stream   -> send   (logsocket sh) omsg
           sendstr (genericDrop sent omsg)
-        toSyslogFormat msg pidPart =
-            "<" ++ code ++ ">" ++ identity' ++ pidPart ++ ": " ++ msg ++ "\0"
+        toSyslogFormat msg' pidPart =
+            "<" ++ code ++ ">" ++ identity' ++ pidPart ++ ": " ++ msg' ++ "\0"
         code = show $ makeCode (facility sh) prio
         identity' = identity sh
         getPidPart = if elem PID (options sh)

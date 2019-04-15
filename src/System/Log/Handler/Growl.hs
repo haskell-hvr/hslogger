@@ -38,7 +38,7 @@ instance LogHandler GrowlHandler where
     setLevel gh p = gh { priority = p }
 
     getLevel = priority
-               
+
     setFormatter gh f = gh { formatter = f }
     getFormatter = formatter
 
@@ -110,7 +110,7 @@ addTarget :: S.HostName -> GrowlHandler -> IO GrowlHandler
 addTarget hn gh = do { he <- S.getHostByName hn
                      ; let ha = S.hostAddress he
                            sa = S.SockAddrInet 9887 ha
-                       in do { sendTo (skt gh) (buildRegistration gh) sa
+                       in do { _ <- sendTo (skt gh) (buildRegistration gh) sa
                              ; return gh { targets = ha:(targets gh) } } }
 
 -- Converts a Priority type into the subset of integers needed in the

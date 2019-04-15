@@ -21,7 +21,6 @@ module System.Log.Handler(-- * Basic Types
                                ) where
 import System.Log
 import System.Log.Formatter
-import System.IO
 
 {- | All log handlers should adhere to this. -}
 
@@ -37,12 +36,12 @@ class LogHandler a where
                    -- | Set a log formatter to customize the log format for this Handler
                    setFormatter :: a -> LogFormatter a -> a
                    getFormatter :: a -> LogFormatter a
-                   getFormatter h = nullFormatter
+                   getFormatter _ = nullFormatter
                    -- | Logs an event if it meets the requirements
                    -- given by the most recent call to 'setLevel'.
                    handle :: a -> LogRecord -> String-> IO ()
 
-                   handle h (pri, msg) logname = 
+                   handle h (pri, msg) logname =
                        if pri >= (getLevel h)
                           then do formattedMsg <- (getFormatter h) h (pri,msg) logname
                                   emit h (pri, formattedMsg) logname
@@ -53,7 +52,3 @@ class LogHandler a where
                    -- | Closes the logging system, causing it to close
                    -- any open files, etc.
                    close :: a -> IO ()
-
-
-
-
