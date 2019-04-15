@@ -1,18 +1,19 @@
-Cabal-Version: >=1.10
-Name: hslogger
-Version: 1.2.13
-
-Maintainer: hvr@gnu.org
-Author: John Goerzen
-Copyright: Copyright (c) 2004-2018 John Goerzen
-License: BSD3
-license-file: LICENSE
+cabal-version: 1.12
 build-type: Simple
-Homepage: http://software.complete.org/hslogger
-Bug-Reports: https://github.com/hvr/hslogger/issues
-Category: Interfaces
-Synopsis: Versatile logging framework
-Description:
+name: hslogger
+version: 1.3.0.0
+
+maintainer: hvr@gnu.org
+author: John Goerzen
+copyright: Copyright (c) 2004-2018 John Goerzen
+                   , (c) 2019      Herbert Valerio Riedel
+license: BSD3
+license-file: LICENSE
+homepage: https://github.com/hvr/hslogger/wiki
+bug-reports: https://github.com/hvr/hslogger/issues
+category: Interfaces
+synopsis: Versatile logging framework
+description:
  @hslogger@ is a logging framework for Haskell, roughly similar
  to [Python's logging module](https://docs.python.org/2/library/logging.html).
  .
@@ -22,17 +23,16 @@ Description:
  has a [Syslog](https://tools.ietf.org/html/rfc5424) handler built in.
 
 extra-source-files:
-    LICENSE,
-    CHANGELOG,
-    contrib/java/build.xml,
-    contrib/java/hslogger4j.jar,
-    contrib/java/hslogger4j-plugins.xml,
-    contrib/java/org/haskell/hslogger/HsloggerLevel.java,
-    contrib/java/org/haskell/hslogger/LogFileXMLReceiver.java,
-    contrib/java/org/haskell/hslogger/XMLDecoder.java,
-    testsrc/Tests.hs,
-    testsrc/runtests.hs,
-    winbuild.bat
+    LICENSE
+    CHANGELOG.md
+    contrib/java/build.xml
+    contrib/java/hslogger4j.jar
+    contrib/java/hslogger4j-plugins.xml
+    contrib/java/org/haskell/hslogger/HsloggerLevel.java
+    contrib/java/org/haskell/hslogger/LogFileXMLReceiver.java
+    contrib/java/org/haskell/hslogger/XMLDecoder.java
+    testsrc/Tests.hs
+    testsrc/runtests.hs
 
 tested-with:
   GHC ==7.0.4 || ==7.2.2 || ==7.4.2 || ==7.6.3 || ==7.8.4 || ==7.10.3 || ==8.0.2 || ==8.2.2 || ==8.4.4 || ==8.6.4
@@ -41,52 +41,54 @@ source-repository head
   type: git
   location: http://github.com/hvr/hslogger.git
 
-flag network-bsd
-  description: Use network-bsd
+flag network--GT-3_0_0
+  description: [network](http://hackage.haskell.org/package/network) ≥ 3.0.0
   default: True
   manual: False
 
-Library
-    Exposed-Modules:
-      System.Log, System.Log.Handler, System.Log.Formatter,
-        System.Log.Handler.Simple, System.Log.Handler.Syslog,
-        System.Log.Handler.Growl, System.Log.Handler.Log4jXML,
+library
+    hs-source-dirs: src
+    exposed-modules:
+        System.Log
+        System.Log.Handler
+        System.Log.Formatter
+        System.Log.Handler.Simple
+        System.Log.Handler.Syslog
+        System.Log.Handler.Growl
+        System.Log.Handler.Log4jXML
         System.Log.Logger
+    other-modules:
+        UTF8
 
-    Default-Language: Haskell2010
-    Default-Extensions: CPP ExistentialQuantification
-
-    Other-Modules: UTF8
+    default-language: Haskell2010
+    other-extensions: CPP ExistentialQuantification
 
     build-depends:
         base       >= 4.3 && < 4.13
       , bytestring >= 0.9 && < 0.11
       , containers >= 0.4 && < 0.7
-      , directory  >= 1.1 && < 1.4
-      , process    >= 1.1 && < 1.7
       , time       >= 1.2 && < 1.10
       , old-locale >= 1.0 && < 1.1
 
-    if flag(network-bsd)
-      build-depends: network-bsd >= 2.8 && <2.9,
-                     network >= 2.8 && <3.1
+    if flag(network--GT-3_0_0)
+      build-depends: network-bsd >= 2.8.1 && <2.9,
+                     network >= 3.0 && <3.1
     else
-      build-depends: network >= 2.6 && <2.8
- 
-    if !os(windows)
-        Build-Depends: unix < 2.8
+      build-depends: network >= 2.6 && <2.9
 
-    Hs-Source-Dirs: src
+    if !os(windows)
+      Build-Depends: unix >= 2.4.2 && < 2.8
+
 
 test-suite runtests
     type: exitcode-stdio-1.0
-    Main-Is: runtests.hs
-    HS-Source-Dirs: testsrc, ., src
-    Default-Language: Haskell2010
-    Default-Extensions:
-        ExistentialQuantification
-        OverlappingInstances
-        UndecidableInstances
-        CPP
-    build-depends: base
-                 , HUnit
+
+    hs-source-dirs: testsrc
+    main-is: runtests.hs
+    other-modules: Tests
+
+    default-language: Haskell2010
+    build-depends:
+        base
+      , HUnit == 1.3.* || == 1.6.*
+      , hslogger

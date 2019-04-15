@@ -1,10 +1,10 @@
+{-# LANGUAGE CPP, ExistentialQuantification #-}
+
 {- |
    Module     : System.Log.Logger
    Copyright  : Copyright (C) 2004-2011 John Goerzen
    License    : BSD3
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
-   Stability  : provisional
    Portability: portable
 
 Haskell Logging Framework, Primary Interface

@@ -3,8 +3,6 @@
    Copyright  : Copyright (C) 2007-2011 John Goerzen <jgoerzen@complete.org>
    License    : BSD3
 
-   Maintainer : Richard M. Neswold, Jr. <rich.neswold@gmail.com>
-   Stability  : provisional
    Portability: portable
 
 Simple log handlers

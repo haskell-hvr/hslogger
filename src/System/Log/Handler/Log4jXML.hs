@@ -4,8 +4,6 @@
    Copyright  : Copyright (C) 2007-2011 John Goerzen
    License    : BSD3
 
-   Maintainer : bjorn.buckwalter@gmail.com
-   Stability  : experimental
    Portability: GHC only?
 
 log4j[1] XMLLayout log handlers.

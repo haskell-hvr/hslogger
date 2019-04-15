@@ -1,11 +1,5 @@
-dist
-cabal-dev
-*.o
-*.hi
-*.chi
-*.chs.h
-.virthualenv
-.cabal-sandbox
-cabal.sandbox.config
+/dist
+/dist-newstyle
 TAGS
-.stack-work
+/.ghc.environment.*
+/cabal.project.local

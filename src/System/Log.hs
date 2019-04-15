@@ -3,8 +3,6 @@
    Copyright  : Copyright (C) 2004-2011 John Goerzen
    License    : BSD3
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
-   Stability  : experimental
    Portability: portable
 
 Haskell Logging Framework
