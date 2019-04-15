@@ -162,7 +162,7 @@ openlog :: String                       -- ^ The name of this program -- will be
         -> IO SyslogHandler             -- ^ Returns the new handler
 
 #ifdef mingw32_HOST_OS
-openlog = openlog_remote AF_INET "localhost" 514
+openlog = openlog_remote S.AF_INET "localhost" 514
 #elif darwin_HOST_OS
 openlog = openlog_local "/var/run/syslog"
 #else
