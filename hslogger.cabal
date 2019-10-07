@@ -72,7 +72,7 @@ library
 
     if flag(network--GT-3_0_0)
       build-depends: network-bsd >= 2.8.1 && <2.9,
-                     network >= 3.0 && <3.1
+                     network >= 3.0 && <3.2
     else
       build-depends: network >= 2.6 && <2.9
 
