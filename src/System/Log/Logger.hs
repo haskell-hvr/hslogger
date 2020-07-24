@@ -117,14 +117,14 @@ Here's an example to illustrate some of these concepts:
 >        --
 >        -- So, we adjust the Logger for MyApp.BuggyComponent.
 >
->        saveGlobalLogger =<<
->          setLevel DEBUG <$> getLogger "MyApp.BuggyComponent"
+>        let loggerB' = setLevel DEBUG loggerB
+>        saveGlobalLogger loggerB'
 >
 >        -- This message will go to syslog and stderr
->        logL loggerB DEBUG "This buggy component is buggy"
+>        logL loggerB' DEBUG "This buggy component is buggy"
 >
 >        -- This message will go to syslog and stderr too.
->        logL loggerB WARNING "Still Buggy"
+>        logL loggerB' WARNING "Still Buggy"
 >
 >        -- This message goes nowhere.
 >        logL loggerW DEBUG "Hello"
@@ -135,12 +135,13 @@ Here's an example to illustrate some of these concepts:
 >
 >        h <- fileHandler "debug.log" DEBUG >>= \lh -> return $
 >                 setFormatter lh (simpleLogFormatter "[$time : $loggername : $prio] $msg")
->        saveGlobalLogger =<< addHandler h <$> getLogger "MyApp.BuggyComponent"
+>        let loggerB'' = addHandler h loggerB'
+>        saveGlobalLogger loggerB''
 >
 >        -- This message will go to syslog and stderr,
 >        -- and to the file "debug.log" with a format like :
 >        -- [2010-05-23 16:47:28 : MyApp.BuggyComponent : DEBUG] Some useful diagnostics...
->        logL loggerB DEBUG "Some useful diagnostics..."
+>        logL loggerB'' DEBUG "Some useful diagnostics..."
 >
 >
 -}
