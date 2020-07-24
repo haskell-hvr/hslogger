@@ -96,14 +96,19 @@ Here's an example to illustrate some of these concepts:
 > -- "MyApp.Component" is an arbitrary string; you can tune
 > -- logging behavior based on it later.
 > main = do
->        debugM "MyApp.Component"  "This is a debug message -- never to be seen"
->        warningM "MyApp.Component2" "Something Bad is about to happen."
+>        logger1 <- getLogger "MyApp.Component"
+>        logger2 <- getLogger "MyApp.Component2"
+>        loggerB <- getLogger "MyApp.BuggyComponent"
+>        loggerW <- getLogger "MyApp.WorkingComponent"
+>
+>        logL logger1 DEBUG "This is a debug message -- never to be seen"
+>        logL logger2 WARNING "Something Bad is about to happen."
 >
 >        -- Copy everything to syslog from here on out.
 >        s <- openlog "SyslogStuff" [PID] USER DEBUG
->        updateGlobalLogger rootLoggerName (addHandler s)
+>        saveGlobalLogger =<< addHandler s <$> getRootLogger
 >
->        errorM "MyApp.Component" "This is going to stderr and syslog."
+>        logL logger1 ERROR "This is going to stderr and syslog."
 >
 >        -- Now we'd like to see everything from BuggyComponent
 >        -- at DEBUG or higher go to syslog and stderr.
@@ -112,17 +117,17 @@ Here's an example to illustrate some of these concepts:
 >        --
 >        -- So, we adjust the Logger for MyApp.BuggyComponent.
 >
->        updateGlobalLogger "MyApp.BuggyComponent"
->                           (setLevel DEBUG)
+>        saveGlobalLogger =<<
+>          setLevel DEBUG <$> getLogger "MyApp.BuggyComponent"
 >
 >        -- This message will go to syslog and stderr
->        debugM "MyApp.BuggyComponent" "This buggy component is buggy"
+>        logL loggerB DEBUG "This buggy component is buggy"
 >
 >        -- This message will go to syslog and stderr too.
->        warningM "MyApp.BuggyComponent" "Still Buggy"
+>        logL loggerB WARNING "Still Buggy"
 >
 >        -- This message goes nowhere.
->        debugM "MyApp.WorkingComponent" "Hello"
+>        logL loggerW DEBUG "Hello"
 >
 >        -- Now we decide we'd also like to log everything from BuggyComponent at DEBUG
 >        -- or higher to a file for later diagnostics.  We'd also like to customize the
@@ -130,12 +135,12 @@ Here's an example to illustrate some of these concepts:
 >
 >        h <- fileHandler "debug.log" DEBUG >>= \lh -> return $
 >                 setFormatter lh (simpleLogFormatter "[$time : $loggername : $prio] $msg")
->        updateGlobalLogger "MyApp.BuggyComponent" (addHandler h)
+>        saveGlobalLogger =<< addHandler h <$> getLogger "MyApp.BuggyComponent"
 >
 >        -- This message will go to syslog and stderr,
 >        -- and to the file "debug.log" with a format like :
 >        -- [2010-05-23 16:47:28 : MyApp.BuggyComponent : DEBUG] Some useful diagnostics...
->        debugM "MyApp.BuggyComponent" "Some useful diagnostics..."
+>        logL loggerB DEBUG "Some useful diagnostics..."
 >
 >
 -}
