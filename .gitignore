@@ -3,3 +3,4 @@
 TAGS
 /.ghc.environment.*
 /cabal.project.local
+/.stack-work/

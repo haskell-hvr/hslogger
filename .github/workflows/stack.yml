@@ -1,0 +1,103 @@
+# Adapted from github.com:debug-ito/staversion/.github/workflows/haskell.yml
+
+name: Stack build
+
+on:
+  push:
+    branches:
+      - master
+      - ci-*
+  pull_request:
+    branches:
+      - master
+      - ci-*
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  stack:
+    name: ${{ matrix.os }} Stack ${{ matrix.plan.resolver }} / ${{ matrix.plan.ghc }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        plan:
+          - resolver: 'nightly'
+          - resolver: 'lts'
+          - ghc: '9.4.4'
+            resolver: 'nightly-2023-03-24'
+          - ghc: '9.2.7'
+            resolver: 'lts-20.15'
+          - ghc: '9.0.2'
+            resolver: 'lts-19.33'
+          - ghc: '8.10.7'
+            resolver: 'lts-18.28'
+          - ghc: '8.8.4'
+            resolver: 'lts-16.31'
+          - ghc: '8.6.5'
+            resolver: 'lts-14.27'
+          - ghc: '8.4.4'
+            resolver: 'lts-12.26'
+          - ghc: '8.2.2'
+            resolver: 'lts-11.22'
+          # Older LTSs don't work with latest hslogger.
+
+        include:
+          - os: windows-latest
+            plan:
+              resolver: 'nightly'
+          - os: windows-latest
+            plan:
+              resolver: 'lts'
+
+          - os: macos-latest
+            plan:
+              resolver: 'nightly'
+          - os: macos-latest
+            plan:
+              resolver: 'lts'
+
+    runs-on: ${{ matrix.os }}
+    env:
+      STACK: stack --no-terminal --resolver ${{ matrix.plan.resolver }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configure
+      run: $STACK init
+
+    - name: Install GHC via stack
+      run: $STACK ghc -- --version
+
+    - name: Haskell versions
+      run: |
+        STACK_VERSION=$(${STACK} --numeric-version)
+        echo "STACK_VERSION=${STACK_VERSION}" >> "${GITHUB_ENV}"
+        GHC_VERSION=$(${STACK} ghc -- --numeric-version)
+        echo "GHC_VERSION=${GHC_VERSION}" >> "${GITHUB_ENV}"
+
+      ## This causes troubles on Windows (spaces in env variable)?
+      # STACK_ROOT=$(${STACK} path --stack-root)
+      # echo "STACK_ROOT=${STACK_ROOT}" >> "${GITHUB_ENV}"
+
+    ## Caching ~/.stack without --system-ghc is probably not a good idea:
+    ## - too fat
+    ## - should be sensibly restored before installing GHC via stack,
+    ##   but then we don't know the GHC version; so at least 'lts' and 'nightly' would be brittle
+    ##
+    # - uses: actions/cache@v3
+    #   with:
+    #     path: ${{ env.STACK_ROOT }}
+    #     key: ${{ runner.os }}-stack-${{ env.STACK_VERSION }}-ghc-${{ env.GHC_VERSION }}-resolver-${{ matrix.plan.resolver }}
+
+    - name: Install dependencies
+      run: $STACK test --only-dependencies
+
+    - name: Build
+      run: $STACK build --haddock --no-haddock-deps
+
+    - name: Test
+      run: $STACK -j 1 test --haddock --no-haddock-deps
