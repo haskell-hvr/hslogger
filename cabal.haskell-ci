@@ -1,4 +1,4 @@
-branches: master ci-*
+branches: master
 
 constraint-set bytestring-0.12
   ghc: >= 8.2
@@ -6,5 +6,12 @@ constraint-set bytestring-0.12
   tests: True
   run-tests: True
 
+constraint-set containers-0.7
+  ghc: >= 8.2 && < 9.7
+  constraints: containers ^>= 0.7
+  tests: True
+  run-tests: True
+
 raw-project
   allow-newer: bytestring
+  allow-newer: containers
