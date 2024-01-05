@@ -6,11 +6,9 @@ on:
   push:
     branches:
       - master
-      - ci-*
   pull_request:
     branches:
       - master
-      - ci-*
 
 defaults:
   run:
@@ -26,10 +24,10 @@ jobs:
         plan:
           - resolver: 'nightly'
           - resolver: 'lts'
-          - ghc: '9.6.2'
-            resolver: 'nightly-2023-08-06'
-          - ghc: '9.4.5'
-            resolver: 'lts-21.6'
+          - ghc: '9.6.3'
+            resolver: 'lts-22.4'
+          - ghc: '9.4.8'
+            resolver: 'lts-21.25'
           - ghc: '9.2.8'
             resolver: 'lts-20.26'
           - ghc: '9.0.2'
@@ -66,7 +64,7 @@ jobs:
       STACK: stack --no-terminal --resolver ${{ matrix.plan.resolver }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Configure
       run: $STACK init
