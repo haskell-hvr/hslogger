@@ -1,6 +1,11 @@
 See also https://pvp.haskell.org/faq
 
-#### 1.3.1.0 *(minor)*
+#### 1.3.1.1 *(patch)*
+
+- Drop support for GHC 7
+- Tested with GHC 8.0 - 9.10
+
+### 1.3.1.0 *(minor)*
 
 - Evaluate message before taking lock in simple handler ([#49](https://github.com/haskell-hvr/hslogger/pull/49))
 - Define `Typeable`, `Data`, `Generic` and `NFData` instances for `System.Log.Priority` ([#43](https://github.com/haskell-hvr/hslogger/pull/43))

@@ -1,17 +1,10 @@
 branches: master
 
-constraint-set bytestring-0.12
-  ghc: >= 8.2
-  constraints: bytestring ^>= 0.12
-  tests: True
-  run-tests: True
-
-constraint-set containers-0.7
-  ghc: >= 8.2 && < 9.7
-  constraints: containers ^>= 0.7
+constraint-set network-3.2
+  ghc: >= 8.0
+  constraints: network ^>= 3.2.0.0
   tests: True
   run-tests: True
 
 raw-project
-  allow-newer: bytestring
-  allow-newer: containers
+  allow-newer: network
