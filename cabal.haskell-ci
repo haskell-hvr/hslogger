@@ -1,10 +1,10 @@
 branches: master
 
-constraint-set network-3.2
-  ghc: >= 8.0
-  constraints: network ^>= 3.2.0.0
-  tests: True
-  run-tests: True
-
-raw-project
-  allow-newer: network
+-- constraint-set network-3.2
+--   ghc: >= 8.0
+--   constraints: network ^>= 3.2.0.0
+--   tests: True
+--   run-tests: True
+--
+-- raw-project
+--   allow-newer: network
