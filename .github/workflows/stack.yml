@@ -24,8 +24,8 @@ jobs:
         plan:
           - resolver: 'nightly'
           - resolver: 'lts'
-          - ghc: '9.6.3'
-            resolver: 'lts-22.4'
+          - ghc: '9.6.6'
+            resolver: 'lts-22.34'
           - ghc: '9.4.8'
             resolver: 'lts-21.25'
           - ghc: '9.2.8'
@@ -40,9 +40,9 @@ jobs:
             resolver: 'lts-14.27'
           - ghc: '8.4.4'
             resolver: 'lts-12.26'
-          - ghc: '8.2.2'
-            resolver: 'lts-11.22'
-          # Older LTSs don't work with latest hslogger.
+          # It ends here, because:
+          # LTSs older than 11 don't work with latest hslogger.
+          # Stack dropped support for Cabal 2.0 (GHC 8.2)
 
         include:
           - os: windows-latest
@@ -61,15 +61,23 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     env:
-      STACK: stack --no-terminal --resolver ${{ matrix.plan.resolver }}
+      STACK: stack --no-terminal --system-ghc --resolver ${{ matrix.plan.resolver }}
 
     steps:
     - uses: actions/checkout@v4
 
+    # 2024-09-20: On Windows and macOS, Stack is no longer preinstalled
+    - uses: haskell-actions/setup@v2
+      with:
+        ghc-version: ${{ matrix.plan.ghc }}
+        stack-version: latest
+        enable-stack: true
+        cabal-update: false
+
     - name: Configure
       run: $STACK init
 
-    - name: Install GHC via stack
+    - name: Install GHC via stack (or check that GHC is present)
       run: $STACK ghc -- --version
 
     - name: Haskell versions
