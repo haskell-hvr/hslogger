@@ -107,11 +107,7 @@ module System.Log.Handler.Log4jXML (
 import Control.Concurrent (myThreadId)  -- myThreadId is GHC only!
 import Data.List (isPrefixOf)
 import System.IO
-#if MIN_VERSION_time(1,5,0)
 import Data.Time.Format (defaultTimeLocale)
-#else
-import System.Locale (defaultTimeLocale)
-#endif
 import Data.Time
 import System.Log
 import System.Log.Handler

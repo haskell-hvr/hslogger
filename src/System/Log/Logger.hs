@@ -471,9 +471,9 @@ database.  Here's an example from above (\"s\" is a 'LogHandler'):
 >                    (setLevel DEBUG . setHandlers [s])
 -}
 
-updateGlobalLogger :: String            -- ^ Logger name
-                      -> (Logger -> Logger) -- ^ Function to call
-                      -> IO ()
+updateGlobalLogger :: String             -- ^ Logger name
+                   -> (Logger -> Logger) -- ^ Function to call
+                   -> IO ()
 updateGlobalLogger ln func =
     do l <- getLogger ln
        saveGlobalLogger (func l)
@@ -482,16 +482,9 @@ updateGlobalLogger ln func =
 removeAllHandlers :: IO ()
 removeAllHandlers =
     modifyMVar_ logTree $ \lt -> do
-        let allHandlers = mapFoldr (\l r -> concat [r, handlers l]) [] lt
+        let allHandlers = Map.foldr (\l r -> concat [r, handlers l]) [] lt
         mapM_ (\(HandlerT h) -> close h) allHandlers
         return $ Map.map (\l -> l {handlers = []}) lt
-
-mapFoldr :: (a -> b -> b) -> b -> Map.Map k a -> b
-#if MIN_VERSION_containers(0,4,2)
-mapFoldr = Map.foldr
-#else
-mapFoldr f z = foldr f z . Map.elems
-#endif
 
 {- | Traps exceptions that may occur, logging them, then passing them on.
 
@@ -499,11 +492,11 @@ Takes a logger name, priority, leading description text (you can set it to
 @\"\"@ if you don't want any), and action to run.
 -}
 
-traplogging :: String                   -- Logger name
-            -> Priority                 -- Logging priority
-            -> String                   -- Descriptive text to prepend to logged messages
-            -> IO a                     -- Action to run
-            -> IO a                     -- Return value
+traplogging :: String                   -- ^ Logger name
+            -> Priority                 -- ^ Logging priority
+            -> String                   -- ^ Descriptive text to prepend to logged messages
+            -> IO a                     -- ^ Action to run
+            -> IO a                     -- ^ Return value
 traplogging logger priority' desc action =
     let realdesc = case desc of
                              "" -> ""

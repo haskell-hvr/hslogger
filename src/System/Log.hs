@@ -1,9 +1,6 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE DeriveDataTypeable #-}
-
-#if __GLASGOW_HASKELL__ >= 702
 {-# LANGUAGE DeriveGeneric #-}
-#endif
 
 {- |
    Module     : System.Log
@@ -34,9 +31,7 @@ module System.Log(-- * Types
 
 import Control.DeepSeq (NFData(rnf))
 import Data.Data (Data, Typeable)
-#if __GLASGOW_HASKELL__ >= 702
 import  GHC.Generics (Generic)
-#endif
 
 {- | Priorities are used to define how important a log message is.
 Users can filter log messages based on priorities.
@@ -55,11 +50,7 @@ data Priority =
           | CRITICAL                -- ^ Severe situations
           | ALERT                   -- ^ Take immediate action
           | EMERGENCY               -- ^ System is unusable
-#if __GLASGOW_HASKELL__ >= 702
           deriving (Eq, Ord, Enum, Bounded, Show, Read, Data, Typeable, Generic)
-#else
-          deriving (Eq, Ord, Enum, Bounded, Show, Read, Data, Typeable)
-#endif
 
 -- | @since 1.3.1.0
 instance NFData Priority where rnf = (`seq` ())

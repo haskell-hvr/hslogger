@@ -25,7 +25,7 @@ jobs:
           - resolver: 'nightly'
           - resolver: 'lts'
           - ghc: '9.6.6'
-            resolver: 'lts-22.34'
+            resolver: 'lts-22.43'
           - ghc: '9.4.8'
             resolver: 'lts-21.25'
           - ghc: '9.2.8'
