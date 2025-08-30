@@ -1,3 +1,11 @@
+### 1.3.2.0
+
+_2025-08-30, Andreas Abel_
+
+- Drop flag `network--GT-3_0_0` and support for `network < 3`
+- Allow newer `time`
+- Tested with GHC 8.0 - 9.14 alpha1
+
 #### 1.3.1.2
 
 _2025-03-11, Andreas Abel_

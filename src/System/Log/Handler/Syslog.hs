@@ -266,6 +266,7 @@ instance LogHandler SyslogHandler where
           sent <- case sock_type sh of
                     S.Datagram -> sendTo (logsocket sh) omsg (address sh)
                     S.Stream   -> send   (logsocket sh) omsg
+                    _ -> undefined
           sendstr (genericDrop sent omsg)
         toSyslogFormat msg' pidPart =
             "<" ++ code ++ ">" ++ identity' ++ pidPart ++ ": " ++ msg' ++ "\0"
