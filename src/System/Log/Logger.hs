@@ -190,7 +190,10 @@ you'll need to use 'updateGlobalLogger' or 'saveGlobalLogger'.
 {- | These functions commit changes you've made to loggers to the global
 logger hierarchy. -}
                                saveGlobalLogger,
-                               updateGlobalLogger
+                               updateGlobalLogger,
+                               -- ** Inspecting the Logger Tree
+                               getLoggerNames,
+                               getConfiguredLoggers
                                ) where
 import System.Log
 import System.Log.Handler(LogHandler, close)
@@ -477,6 +480,23 @@ updateGlobalLogger :: String             -- ^ Logger name
 updateGlobalLogger ln func =
     do l <- getLogger ln
        saveGlobalLogger (func l)
+
+-- | Returns the names of all loggers that have been created in the
+-- global logger hierarchy. This includes loggers created explicitly
+-- with 'getLogger' or 'saveGlobalLogger', as well as any parent
+-- loggers that were implicitly created in the process.
+
+getLoggerNames :: IO [String]
+getLoggerNames = Map.keys <$> readMVar logTree
+
+-- | Returns the names and levels of all loggers that have an
+-- explicitly set 'Priority'. Loggers without an explicit level
+-- (i.e., those inheriting from their parent) are not included.
+
+getConfiguredLoggers :: IO [(String, Priority)]
+getConfiguredLoggers = do
+    lt <- readMVar logTree
+    return [(name l, p) | l <- Map.elems lt, Just p <- [level l]]
 
 -- | Allow graceful shutdown. Release all opened files, handlers, etc.
 removeAllHandlers :: IO ()
